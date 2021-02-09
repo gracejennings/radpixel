@@ -2,21 +2,24 @@ import React from 'react';
 import { Row, Col } from 'antd';
 import styled from 'styled-components';
 import './Workspace.css';
+import { GraphContainer } from './GraphContainer';
+import { VideoPlayer } from './VideoPlayer';
 
 const Container = styled.div`
     border: 1px solid black;
-    border-radius: 0.25px;
+    border-radius: 5px;
     width: 100%;
+    height: 100%;
 `;
 
 export const Workspace = (props) => {
     return (
         <div style={{height: '100vh'}}>
-            <Row gutter={[16, 16]} style={{height: '90%'}}>
+            <Row className="body-row">
                 <Col span={16}>
                     <Row style={{height: '80%'}}>
                         <Container>
-                            Player
+                            <VideoPlayer />
                         </Container>
                     </Row>
                     <Row style={{height: '20%'}}>
@@ -26,19 +29,14 @@ export const Workspace = (props) => {
                     </Row>
                 </Col>
                 <Col span={8}>
-                    <Row style={{height: '50%'}}>
+                    <Row style={{height: '100%'}}>
                         <Container>
-                            Graph 1
-                        </Container>
-                    </Row>
-                    <Row style={{height: '50%'}}>
-                        <Container>
-                            Graph 2
+                            <GraphContainer />
                         </Container>
                     </Row>
                 </Col>
             </Row>
-            <Row gutter={[16, 16]} >
+            <Row className="footer-row">
                 <Col span={24}>
                     <Container>
                         Control panel
