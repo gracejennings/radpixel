@@ -8,6 +8,7 @@ class Video extends React.Component {
       this.player = videojs(this.videoNode, this.props, function onPlayerReady() {
         console.log('Video.js Ready', this)
       });
+      this.player.fill(true);
     }
     componentWillUnmount() {
       if (this.player) {
@@ -16,8 +17,10 @@ class Video extends React.Component {
     }
     render() {
       return (
-          <div data-vjs-player>
-            <video ref={ node => this.videoNode = node } className="video-js"></video>
+          <div style={{height: '100%', width: '100%'}}>
+            <div data-vjs-player>
+                <video ref={ node => this.videoNode = node } className="video-js"></video>
+            </div>
           </div>
       )
     }
@@ -25,11 +28,9 @@ class Video extends React.Component {
 
 export const VideoPlayer = (props) => {
     const videoJsOptions = {
-        autoplay: true,
-        controls: false,
-        height: '400px',
+        controls: true,
         sources: [{
-          src: '/path/to/video.mp4',
+          src: 'alpha_manyevents.mp4',
           type: 'video/mp4'
         }]
     }
@@ -37,6 +38,7 @@ export const VideoPlayer = (props) => {
     return (
         <div style={{height: '100%', width: '100%'}}>
             <Video { ...videoJsOptions} />
+            {/* <video src='alpha_manyevents.mp4' type="video/mp4" style={{height: '100%', width: '100%'}} /> */}
         </div>
     )
 };
