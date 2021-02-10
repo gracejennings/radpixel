@@ -18,9 +18,7 @@ export const Workspace = (props) => {
             <Row className="body-row">
                 <Col span={16}>
                     <Row style={{height: '80%'}}>
-                        <Container>
-                            <VideoPlayer />
-                        </Container>
+                        <VideoPlayer />
                     </Row>
                     <Row style={{height: '20%'}}>
                         <Container>
@@ -30,9 +28,7 @@ export const Workspace = (props) => {
                 </Col>
                 <Col span={8}>
                     <Row style={{height: '100%'}}>
-                        <Container>
-                            <GraphContainer />
-                        </Container>
+                        <GraphContainer />
                     </Row>
                 </Col>
             </Row>

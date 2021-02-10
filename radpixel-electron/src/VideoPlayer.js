@@ -28,7 +28,7 @@ class Video extends React.Component {
 
 export const VideoPlayer = (props) => {
     const videoJsOptions = {
-        controls: true,
+        controls: true, // @TODO video should be controlled from elsewhere
         sources: [{
           src: 'alpha_manyevents.mp4',
           type: 'video/mp4'
