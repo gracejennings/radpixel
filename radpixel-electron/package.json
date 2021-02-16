@@ -7,6 +7,7 @@
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.6.3",
     "antd": "^4.12.2",
+    "craco-less": "^1.17.1",
     "electron-load-balancer": "^3.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

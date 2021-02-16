@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import './Workspace.css';
 import { GraphContainer } from './GraphContainer';
 import { VideoPlayer } from './VideoPlayer';
+import { StatsContainer } from './StatsContainer';
 
 const Container = styled.div`
     border: 1px solid black;
@@ -20,10 +21,8 @@ export const Workspace = (props) => {
                     <Row style={{height: '80%'}}>
                         <VideoPlayer />
                     </Row>
-                    <Row style={{height: '20%'}}>
-                        <Container>
-                            Stats
-                        </Container>
+                    <Row align="middle" style={{height: '20%'}}>
+                        <StatsContainer />
                     </Row>
                 </Col>
                 <Col span={8}>

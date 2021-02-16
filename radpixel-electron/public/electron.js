@@ -15,7 +15,10 @@ function createWindow() {
         protocol: 'file:',
         slashes: true,
       });
-  mainWindow = new BrowserWindow();
+  mainWindow = new BrowserWindow({
+    width: 1200,
+    height: 900
+  });
 
   mainWindow.loadURL(startUrl);
   process.env.DEV && mainWindow.webContents.openDevTools();
