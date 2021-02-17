@@ -84,6 +84,7 @@ ipcMain.on('MESSAGE_FROM_BACKGROUND', (event, args) => {
 	mainWindow.webContents.send('MESSAGE_FROM_BACKGROUND_VIA_MAIN', args.message);
 });
 
+// listening for the confirmation that the hidden renderer is ready
 ipcMain.on('BACKGROUND_READY', (event, args) => {
 
 	event.reply('START_PROCESSING', {

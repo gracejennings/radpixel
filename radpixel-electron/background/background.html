@@ -4,7 +4,9 @@
 	const { ipcRenderer } = require('electron');
 	const path = require('path');
 
+	// when hidden renderer hasbeen initialized properly, start function that will start python script 
 	ipcRenderer.on('START_PROCESSING', (event, args) => {
+		//here the file system question comes in. Are we going to be passing a file path here?
 		const { data } = args;
 		let pyshell = new PythonShell(path.join(__dirname, '/../scripts/will_driver.py'), {
 			pythonPath: 'python3',
