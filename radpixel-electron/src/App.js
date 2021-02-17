@@ -1,10 +1,10 @@
-import React from 'react';
-import { Workspace } from './components/Workspace';
+import React from "react";
+import { Workspace } from "./components/Workspace";
 
 export const App = (props) => {
-    return (
-        <div>
-            <Workspace />
-        </div>
-    )
+  return (
+    <div>
+      <Workspace />
+    </div>
+  );
 };
