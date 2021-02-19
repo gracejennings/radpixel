@@ -1,6 +1,6 @@
-const electron = require('electron');
-const path = require('path');
-const url = require('url');
+const electron = require("electron");
+const path = require("path");
+const url = require("url");
 
 const { app } = electron;
 const { BrowserWindow } = electron;
@@ -11,31 +11,34 @@ let mainWindow;
 
 function createWindow() {
   const startUrl = process.env.DEV
-    ? 'http://localhost:3000'
+    ? "http://localhost:3000"
     : url.format({
-        pathname: path.join(__dirname, '/../build/index.html'),
-        protocol: 'file:',
+        pathname: path.join(__dirname, "/../build/index.html"),
+        protocol: "file:",
         slashes: true,
       });
-  mainWindow = new BrowserWindow();
+  mainWindow = new BrowserWindow({
+    width: 1200,
+    height: 900,
+  });
 
   mainWindow.loadURL(startUrl);
   process.env.DEV && mainWindow.webContents.openDevTools();
 
-  mainWindow.on('closed', function() {
+  mainWindow.on("closed", function () {
     mainWindow = null;
   });
 }
 
-app.on('ready', createWindow);
+app.on("ready", createWindow);
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
-app.on('activate', () => {
+app.on("activate", () => {
   if (mainWindow === null) {
     createWindow();
   }
@@ -78,17 +81,17 @@ ipcMain.on('START_BACKGROUND_VIA_MAIN', (event, args) => {
 	cache.data = args.number;
 });
 
+// listening for the confirmation that the hidden renderer is ready
+ipcMain.on('BACKGROUND_READY', (event, args) => {
+	event.reply('START_PROCESSING', {
+		data: cache.data,
+	});
+});
+
+
 // This event listener will listen for data being sent back
 // from the background renderer process
 ipcMain.on('MESSAGE_FROM_BACKGROUND', (event, args) => {
 	mainWindow.webContents.send('MESSAGE_FROM_BACKGROUND_VIA_MAIN', args.message);
-});
-
-// listening for the confirmation that the hidden renderer is ready
-ipcMain.on('BACKGROUND_READY', (event, args) => {
-
-	event.reply('START_PROCESSING', {
-		data: cache.data,
-	});
 });
 

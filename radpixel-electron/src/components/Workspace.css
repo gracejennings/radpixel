@@ -1,0 +1,14 @@
+.body-row {
+  position: absolute;
+  bottom: 60px;
+  top: 0px;
+  width: 100%;
+}
+
+.footer-row {
+  height: 60px;
+  width: 100%;
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+}
