@@ -20,6 +20,9 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 900,
+	webPreferences: {
+		nodeIntegration: true,
+	},
   });
 
   mainWindow.loadURL(startUrl);
@@ -81,17 +84,17 @@ ipcMain.on('START_BACKGROUND_VIA_MAIN', (event, args) => {
 	cache.data = args.number;
 });
 
+// This event listener will listen for data being sent back
+// from the background renderer process
+ipcMain.on('MESSAGE_FROM_BACKGROUND', (event, args) => {
+	mainWindow.webContents.send('MESSAGE_FROM_BACKGROUND_VIA_MAIN', args.message);
+});
+
+
 // listening for the confirmation that the hidden renderer is ready
 ipcMain.on('BACKGROUND_READY', (event, args) => {
 	event.reply('START_PROCESSING', {
 		data: cache.data,
 	});
-});
-
-
-// This event listener will listen for data being sent back
-// from the background renderer process
-ipcMain.on('MESSAGE_FROM_BACKGROUND', (event, args) => {
-	mainWindow.webContents.send('MESSAGE_FROM_BACKGROUND_VIA_MAIN', args.message);
 });
 
