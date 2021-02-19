@@ -18,6 +18,10 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 900,
+    webPreferences: { 
+      nodeIntegration: true,
+      enableRemoteModule: true,
+    }
   });
 
   mainWindow.loadURL(startUrl);
