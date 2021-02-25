@@ -1,14 +1,11 @@
-import math
 import sys
-import console
 
 data = sys.argv[1]
 
-def = factorial(data) {
-    return math.factorial(data)
+def factorial(x):
+	if x == 1 :
+		return 1
+	else:
+		return x * factorial(x-1)
 
-console.log('Entering factorial.py')
-print('Entering facrotial.py')
-print (factorial(int(data)))
-# if __name__=="__main__": 
-#     factorial(argv[0])
+print(factorial( int(data) ))
