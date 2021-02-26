@@ -10,6 +10,7 @@
     "antd": "^4.12.2",
     "craco-less": "^1.17.1",
     "electron-load-balancer": "^3.0.0",
+    "python-shell": "^2.0.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.2",
