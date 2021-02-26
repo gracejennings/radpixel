@@ -20,55 +20,57 @@ class Work extends React.Component {
     };
   }
 
-  componentDidMount() {
-    console.log("inside component did mount", this);
+  // componentDidMount() {
+  //   }
+    
+    changeVideoState = (newState) => {
+      this.setState({videoState: newState});
+    };  
+    setVideoTime = (time) => {
+      this.setState({videoTime: (time)});
+    }; 
+    setVideoDuration = (duration) => {
+      this.setState({videoDuration: duration});
+    }; 
 
-    // setting up an event listener to read data that background process
-    // will send via the main process after processing the data we
-    // send from visiable renderer process
-    ipcRenderer.on("MESSAGE_FROM_BACKGROUND_VIA_MAIN", (event, args) => {
-      console.log(args, this);
-      console.log("In the App.js on message from backrgound", this);
-    });
-
-    // trigger event to start background process
-    // can be triggered pretty much from anywhere after
-    // you have set up a listener to get the information
-    // back from background process, as I have done in line 13
-    ipcRenderer.send("START_BACKGROUND_VIA_MAIN", {
-      number: 25,
-    });
-    console.log("finished component did mount", this);
-  }
-
-  changeVideoState = (newState) => {
-    this.setState({ videoState: newState });
-  };
-  setVideoTime = (time) => {
-    this.setState({ videoTime: time });
-  };
-  setVideoDuration = (duration) => {
-    this.setState({ videoDuration: duration });
-  };
-
-  render() {
-    return (
-      <div style={{ height: "100vh" }}>
-        <Row className="body-row">
-          <Col span={16}>
-            <Row style={{ height: "80%" }}>
-              <VideoPlayer
+    render() {
+      return (
+        <div style={{ height: "100vh" }}>
+          <Row className="body-row">
+            <Col span={16}>
+              <Row style={{ height: "80%" }}>
+                <VideoPlayer
+                  videoState={this.state.videoState}
+                  videoSrc={this.state.videoSrc}
+                  videoTime={this.state.videoTime}
+                  updateTime={(time) => this.setVideoTime(time)}
+                  updateDuration={(duration) => this.setVideoDuration(duration)}
+                />
+              </Row>
+              <Row align="middle" style={{ height: "20%" }}>
+                <StatsContainer />
+              </Row>
+            </Col>
+            <Col span={8}>
+              <Row style={{ height: "100%" }}>
+                <GraphContainer />
+              </Row>
+            </Col>
+          <Row className="footer-row">
+            <p>var</p>
+            <Col span={24}>
+              <ControlBar
                 videoState={this.state.videoState}
                 videoSrc={this.state.videoSrc}
                 videoTime={this.state.videoTime}
                 updateTime={(time) => this.setVideoTime(time)}
                 updateDuration={(duration) => this.setVideoDuration(duration)}
               />
-            </Row>
-            <Row align="middle" style={{ height: "20%" }}>
-              <StatsContainer />
-            </Row>
-          </Col>
+            </Col>
+          </Row>
+          <Row align="middle" style={{ height: "20%" }}>
+            <StatsContainer />
+          </Row>
           <Col span={8}>
             <Row style={{ height: "100%" }}>
               <GraphContainer />
@@ -92,11 +94,9 @@ class Work extends React.Component {
   }
 }
 
-// export default Workspace;
-// const electron = window.require("electron");
-const { shell } = window.require("electron");
-const remote = electron.remote;
-const { BrowserWindow, dialog } = remote;
+const {shell} = window.require('electron');
+const remote = electron.remote
+const {BrowserWindow,dialog} = remote
 
 export const Workspace = (props) => {
   const [videoState, setVideoState] = useState("pause"); // one of: "pause", "play", "ffw"
@@ -108,31 +108,26 @@ export const Workspace = (props) => {
     setVideoState(newState);
   };
 
-
-  useEffect(() => {
-    console.log("inside component did mount", this);
-
-    // setting up an event listener to read data that background process
-    // will send via the main process after processing the data we
-    // send from visiable renderer process
-    ipcRenderer.on("MESSAGE_FROM_BACKGROUND_VIA_MAIN", (event, args) => {
+  React.useEffect(() => {
+    console.log('inside component did mount', this);
+    
+		// setting up an event listener to read data that background process
+		// will send via the main process after processing the data we
+		// send from visiable renderer process
+		ipcRenderer.on('MESSAGE_FROM_BACKGROUND_VIA_MAIN', (event, args) => {
       console.log(args, this);
-      console.log("In the App.js on message from backrgound", this);
-    });
+      console.log('In the App.js on message from backrgound', this);
+		});
 
-    // trigger event to start background process
-    // can be triggered pretty much from anywhere after
-    // you have set up a listener to get the information
-    // back from background process, as I have done in line 13
-    ipcRenderer.send("START_BACKGROUND_VIA_MAIN", {
-      number: 25,
+		// trigger event to start background process
+		// can be triggered pretty much from anywhere after
+		// you have set up a listener to get the information
+		// back from background process, as I have done in line 13
+		ipcRenderer.send('START_BACKGROUND_VIA_MAIN', {
+			number: 25,
     });
-    console.log("finished component did mount", this);
-
-    return () => {
-      ipcRenderer.removeAllListeners("MESSAGE_FROM_BACKGROUND_VIA_MAIN");
-    };
-  }, [])
+    console.log('finished component did mount', this);
+  }, []);
 
   return (
     <div style={{ height: "100vh" }}>
