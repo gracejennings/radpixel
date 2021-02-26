@@ -21,9 +21,10 @@ console.log('In electron.js creating visible window', this);
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 900,
-	webPreferences: {
-		nodeIntegration: true,
-	},
+    webPreferences: { 
+      nodeIntegration: true,
+      enableRemoteModule: true,
+    }
   });
 
   mainWindow.loadURL(startUrl);
