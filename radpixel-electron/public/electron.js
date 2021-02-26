@@ -16,6 +16,7 @@ function createWindow() {
         slashes: true,
       });
   mainWindow = new BrowserWindow({
+    title: 'RadPixel Radiation Detector',
     width: 1200,
     height: 900,
   });
