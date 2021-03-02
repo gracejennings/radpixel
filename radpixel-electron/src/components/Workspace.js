@@ -9,6 +9,10 @@ import { ControlBar } from "./ControlBar";
 const electron = window.require('electron');
 const { ipcRenderer } = electron;
 
+const {shell} = window.require('electron');
+const remote = electron.remote
+const {BrowserWindow,dialog} = remote
+
 
 class Work extends React.Component {
   constructor(props) {
@@ -20,9 +24,6 @@ class Work extends React.Component {
       videoDuration: null
     };
   }
-
-  // componentDidMount() {
-  //   }
     
     changeVideoState = (newState) => {
       this.setState({videoState: newState});
@@ -61,6 +62,19 @@ class Work extends React.Component {
           <Row className="footer-row">
             <p>var</p>
             <Col span={24}>
+              <button id= "upload" onClick={()=>{
+                dialog.showOpenDialog(
+                  {
+                    title: 'Open Dialogue',
+                    message: 'First Dialog',
+                    //pass 'openDirectory' to strictly open directories
+                    properties: ['openFile']
+                  }
+                  ).then(result=>{
+                    shell.openPath(result.filePaths[0])
+                    console.log(result.filePaths[0]);
+                    })
+                }}>Upload File </button> 
               <ControlBar
                 videoState={this.state.videoState}
                 changeVideoState={(newState) => this.changeVideoState(newState)}
@@ -75,10 +89,6 @@ class Work extends React.Component {
     } 
     
 }
-
-const {shell} = window.require('electron');
-const remote = electron.remote
-const {BrowserWindow,dialog} = remote
 
 export const Workspace = (props) => {
   const [videoState, setVideoState] = useState("pause"); // one of: "pause", "play", "ffw"
