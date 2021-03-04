@@ -2,6 +2,9 @@ const electron = require("electron");
 const path = require("path");
 const url = require("url");
 
+// Electron logs are stored at ~/Library/Logs/radpixel-electron/
+const log = require('electron-log');
+
 const { app } = electron;
 const { BrowserWindow } = electron;
 
@@ -10,7 +13,6 @@ const { ipcMain } = require('electron');
 let mainWindow;
 
 function createWindow() {
-console.log('In electron.js creating visible window', this);
   const startUrl = process.env.DEV
     ? "http://localhost:3000"
     : url.format({
@@ -64,10 +66,13 @@ let hiddenWindow;
 
 // This event listener will listen for request
 // from visible renderer process
+// args.data comes in as an array of strings
 ipcMain.on('START_BACKGROUND_VIA_MAIN', (event, args) => {
-	console.log('inside ipc main start background', this)
+
+  log.info("starting background...");
+
 	const backgroundFileUrl = url.format({
-		pathname: path.join(__dirname, `../background/background.html`),
+		pathname: path.join(__dirname, `../background/startup_aggregate.html`),
 		protocol: 'file:',
 		slashes: true,
 	});
@@ -85,13 +90,14 @@ ipcMain.on('START_BACKGROUND_VIA_MAIN', (event, args) => {
 		hiddenWindow = null;
 	});
 
-	cache.data = args.number;
+  // store this data; we'll get it later
+	cache.data = args.data;
 });
 
 // This event listener will listen for data being sent back
 // from the background renderer process
 ipcMain.on('MESSAGE_FROM_BACKGROUND', (event, args) => {
-	console.log('In the electron.js on message from backrgound', this);
+  log.info("message from background (electron.js): ", args);
 	mainWindow.webContents.send('MESSAGE_FROM_BACKGROUND_VIA_MAIN', args.message);
 });
 
@@ -99,9 +105,7 @@ ipcMain.on('MESSAGE_FROM_BACKGROUND', (event, args) => {
 // listening for the confirmation that the hidden renderer is ready
 ipcMain.on('BACKGROUND_READY', (event, args) => {
 	event.reply('START_PROCESSING', {
-		// data: cache.data,
-		data: 25,
+		data: cache.data,
 	});
-	console.log('In the electron.js on message from backrgound ready', this);
 });
 

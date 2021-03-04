@@ -1,4 +1,6 @@
 import sys
+import os
+import sys
 
 data = sys.argv[1]
 
@@ -9,3 +11,4 @@ def factorial(x):
 		return x * factorial(x-1)
 
 print(factorial( int(data) ))
+#print(os.path.dirname(sys.executable))

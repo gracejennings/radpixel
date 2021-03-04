@@ -10,7 +10,7 @@
 		//here the file system question comes in. Are we going to be passing a file path here?
 		const { data } = args;
 		let pyshell = new PythonShell(path.join(__dirname, '/../scripts/factorial.py'), {
-			pythonPath: 'python3',
+			pythonPath: '/Users/willmiller/.local/share/virtualenvs/scripts-VzXWyAiH/bin/python3',
 			args: [data]
 		});
 

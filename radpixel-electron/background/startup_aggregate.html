@@ -1,0 +1,27 @@
+<script>
+	const { PythonShell } = require('python-shell');
+	const { ipcRenderer } = require('electron');
+	const path = require('path');
+    const log = require('electron-log');
+
+	// when hidden renderer hasbeen initialized properly, start function that will start python script 
+	ipcRenderer.on('START_PROCESSING', (event, args) => {
+		//here the file system question comes in. Are we going to be passing a file path here?
+        const { data } = args;
+
+        log.info('In the background on start processing, data is ', data);
+		
+        let pyshell = new PythonShell(path.join(__dirname, '/../scripts/startup_aggregate.py'), {
+			pythonPath: '../scripts/.venv/bin/python3',
+			args: data,
+		});
+		
+        pyshell.on('message', function(results) {
+            log.info("pyshell got a message: ", results);
+			ipcRenderer.send('MESSAGE_FROM_BACKGROUND', { message: results });
+		});
+	});
+
+	ipcRenderer.send('BACKGROUND_READY');
+
+</script>

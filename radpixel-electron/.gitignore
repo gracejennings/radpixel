@@ -22,4 +22,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# video file
 /public/alpha_manyevents.mp4
+
+# python environment and binary
+/scripts/.venv

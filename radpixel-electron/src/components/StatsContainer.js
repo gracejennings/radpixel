@@ -2,19 +2,18 @@ import React from "react";
 import { Col, Statistic } from "antd";
 
 export const StatsContainer = (props) => {
-  const stats = [
-    { title: "stat1", value: 100.23 },
-    { title: "stat2", value: 0 },
-    { title: "stat3", value: 0.1123 },
-  ];
 
   return (
     <>
-      {stats.map((val, idx) => (
-        <Col flex="auto" key={idx}>
-          <Statistic title={val.title} value={val.value} />
-        </Col>
-      ))}
+      <Col flex="auto">
+        <Statistic title={`Event count - pixels over ${props.eventThreshold}`} value={props.eventCount ? props.eventCount : "Loading..."} />
+      </Col>
+      <Col flex="auto">
+        <Statistic title={"Aggregate stat #2"} value={100} />
+      </Col>
+      <Col flex="auto">
+        <Statistic title={"Aggregate stat #3"} value={100} />
+      </Col>
     </>
   );
 };

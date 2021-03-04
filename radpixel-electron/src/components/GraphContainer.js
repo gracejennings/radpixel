@@ -56,19 +56,39 @@ export const GraphContainer = (props) => {
 
   return (
     <>
-      {plotData.map((val, idx) => (
-        <PlotWrapper>
-          <ResponsiveContainer key={idx} width="99%" height={200}>
-            <LineChart data={val.data}>
-              <Line type="monotone" dataKey="y" stroke="#8884d8" />
-              <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-              <XAxis dataKey="x" />
-              <YAxis />
-            </LineChart>
-          </ResponsiveContainer>
-          <div>{val.title}</div>
-        </PlotWrapper>
-      ))}
+      <PlotWrapper>
+        <ResponsiveContainer width="99%" height={200}>
+          <LineChart data={props.lineChartData}>
+            <Line type="monotone" dataKey="events" stroke="#8884d8" />
+            <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+            <XAxis dataKey="frame" />
+            <YAxis />
+          </LineChart>
+        </ResponsiveContainer>
+        <div>Event count by video frame</div>
+      </PlotWrapper>
+      <PlotWrapper>
+        <ResponsiveContainer width="99%" height={200}>
+          <LineChart data={plotData[0].data}>
+            <Line type="monotone" dataKey="y" stroke="#8884d8" />
+            <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+            <XAxis dataKey="x" />
+            <YAxis />
+          </LineChart>
+        </ResponsiveContainer>
+        <div>Example plot</div>
+      </PlotWrapper>
+      <PlotWrapper>
+        <ResponsiveContainer width="99%" height={200}>
+          <LineChart data={plotData[2].data}>
+            <Line type="monotone" dataKey="y" stroke="#8884d8" />
+            <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+            <XAxis dataKey="x" />
+            <YAxis />
+          </LineChart>
+        </ResponsiveContainer>
+        <div>Example plot</div>
+      </PlotWrapper>
     </>
   );
 };
