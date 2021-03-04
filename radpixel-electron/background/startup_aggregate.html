@@ -12,9 +12,11 @@
         log.info('In the background on start processing, data is ', data);
 		
         let pyshell = new PythonShell(path.join(__dirname, '/../scripts/startup_aggregate.py'), {
-			pythonPath: '../scripts/.venv/bin/python3',
+			pythonPath: path.join(__dirname, '/../scripts/.venv/bin/python3'),
 			args: data,
 		});
+
+		log.info('set up pythonshell successfully');
 		
         pyshell.on('message', function(results) {
             log.info("pyshell got a message: ", results);
