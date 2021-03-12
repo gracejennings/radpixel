@@ -15,13 +15,16 @@ const { dialog } = remote;
 export const Workspace = (props) => {
   const [videoState, setVideoState] = useState("pause"); // one of: "pause", "play", "ffw"
   const [videoTime, setVideoTime] = useState(0); // in seconds
-  const [videoSrc, setVideoSrc] = useState("alpha_manyevents.mp4");
+  const [videoSrc, setVideoSrc] = useState(props.videoSrc);
   const [videoDuration, setVideoDuration] = useState(null); // hacky @TODO clean this up
 
   const [eventThreshold, setEventThreshold] = useState("150"); // this must be a string!!
   const [eventCount, setEventCount] = useState(null);
 
   const [lineChartData, setLineChartData] = useState(null);
+
+  // for testing purposes with factorial 
+  const [number, setNumber] = useState(25);
 
   const changeVideoState = (newState) => {
     setVideoState(newState);
@@ -45,8 +48,9 @@ export const Workspace = (props) => {
       // this query can take up to 50 seconds. Be patient.
       ipcRenderer.send("START_BACKGROUND_VIA_MAIN", {
         data: [
-          "/Users/willmiller/Projects/eece4950/radpixel/radpixel-electron/public/alpha_manyevents.mp4",
-          "150",
+          number
+           //"/Users/juyoungsong/Desktop/Senior_Project/radpixel/radpixel-electron/public/alpha_manyevents.mp4",
+          //"150",
         ],
       });
     }
@@ -93,6 +97,8 @@ export const Workspace = (props) => {
                 .then((result) => {
                   shell.openPath(result.filePaths[0]);
                   console.log(result.filePaths[0]);
+                  setVideoSrc(result.filePaths[0]);
+                  setNumber(3);
                 });
             }}
           >
