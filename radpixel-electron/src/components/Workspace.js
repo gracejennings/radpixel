@@ -24,7 +24,7 @@ export const Workspace = (props) => {
   const [lineChartData, setLineChartData] = useState(null);
 
   // for testing purposes with factorial 
-  const [number, setNumber] = useState(25);
+  // const [number, setNumber] = useState(25);
 
   const changeVideoState = (newState) => {
     setVideoState(newState);
@@ -46,11 +46,13 @@ export const Workspace = (props) => {
       // trigger event to start background process
       // must pass multiple arguments as an array of strings
       // this query can take up to 50 seconds. Be patient.
+      console.log("Starting the background w videoSrc: " + videoSrc)
       ipcRenderer.send("START_BACKGROUND_VIA_MAIN", {
         data: [
-          number
-           //"/Users/juyoungsong/Desktop/Senior_Project/radpixel/radpixel-electron/public/alpha_manyevents.mp4",
-          //"150",
+          // number
+          //  "/Users/juyoungsong/Desktop/Senior_Project/radpixel/radpixel-electron/public/alpha_manyevents.mp4",
+          videoSrc,
+          "150",
         ],
       });
     }
@@ -67,6 +69,7 @@ export const Workspace = (props) => {
               videoTime={videoTime}
               updateTime={(time) => setVideoTime(time)}
               updateDuration={(duration) => setVideoDuration(duration)}
+              updateVideoSrc={(src) => setVideoSrc(src)}
             />
           </Row>
           <Row align="middle" style={{ height: "20%" }}>
@@ -84,7 +87,7 @@ export const Workspace = (props) => {
       </Row>
       <Row className="footer-row">
         <Col span={24}>
-          <button
+          {/* <button
             id="upload"
             onClick={() => {
               dialog
@@ -103,7 +106,7 @@ export const Workspace = (props) => {
             }}
           >
             Upload File{" "}
-          </button>
+          </button> */}
           <ControlBar
             videoState={videoState}
             changeVideoState={(newState) => changeVideoState(newState)}

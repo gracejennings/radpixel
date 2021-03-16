@@ -12,9 +12,9 @@
         log.info('In the background on start processing, data is ', data);
 		
 		// need a fully qualified for startup_agreaget too byt that is what __dirname
-        let pyshell = new PythonShell(path.join(__dirname, '/../scripts/factorial.py'), {
+        let pyshell = new PythonShell(path.join(__dirname, '/../scripts/startup-aggregate.py'), {
 			// need fully qualified python path
-			pythonPath: '/Users/juyoungsong/opt/anaconda3/bin/python3',
+			pythonPath: '/opt/anaconda3/bin/python3',
 			args: data,
 		});
 

@@ -92,6 +92,7 @@ class Video extends React.Component {
 
 // this is kinda just a wrapper for the videojs Video component. most props are passed straight through.
 export const VideoPlayer = (props) => {
+  console.log("creating the video player w src: " + props.videoSrc);
   const videoJsOptions = {
     controls: false, // @TODO video should be controlled from elsewhere
     sources: [
