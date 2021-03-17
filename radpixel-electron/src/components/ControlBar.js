@@ -15,6 +15,13 @@ const ControlWrapper = styled.div`
   background-color: lightgray;
 `;
 
+const UploadWrapper = styled.div`
+  float: left;
+  margin: 10px 10px 10px 10px;
+  font-size: 16px;
+  color: green;
+`;
+
 export const ControlBar = (props) => {
   // clicking step backward sends the video to the beginning in its paused state
   const handleStepBackward = () => {
@@ -28,8 +35,20 @@ export const ControlBar = (props) => {
     props.changeVideoState("pause");
   };
 
+  const handleUploadClick = () => {
+    props.uploadClick();
+  }
+
   return (
     <ControlWrapper>
+      <UploadWrapper >
+        <button
+            id="upload"
+            onClick={handleUploadClick}
+        >
+          Upload File{" "}
+        </button>
+      </UploadWrapper>
       <StepBackwardOutlined onClick={handleStepBackward} />
       {props.videoState === "pause" ? (
         <CaretRightOutlined onClick={() => props.changeVideoState("play")} />

@@ -23,7 +23,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     title: 'RadPixel Radiation Detector',
     width: 1200,
-    height: 900,
+    height: 1000,
     webPreferences: { 
       nodeIntegration: true,
       enableRemoteModule: true,
@@ -97,7 +97,7 @@ ipcMain.on('START_BACKGROUND_VIA_MAIN', (event, args) => {
 // This event listener will listen for data being sent back
 // from the background renderer process
 ipcMain.on('MESSAGE_FROM_BACKGROUND', (event, args) => {
-  log.info("message from background (electron.js): ", args);
+  //log.info("message from background (electron.js): ", args);
 	mainWindow.webContents.send('MESSAGE_FROM_BACKGROUND_VIA_MAIN', args.message);
 });
 
