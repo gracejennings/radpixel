@@ -1,5 +1,16 @@
-# aggregate event count data for a given filename and threshold
-# params: filename, threshold
+# startup_aggregate.py
+#
+# Description: 
+# Run all the aggregate functions for a video on startup
+#
+# Functions:
+# 1. total event count
+# 2. full histogram data
+# 3. event rate over time
+# 4. hot/stuck pixel data
+#
+# Params: filename, threshold
+#
 import sys
 import json
 import numpy as np
@@ -14,15 +25,33 @@ cap = cv2.VideoCapture(fname)
 
 chart_arr = []
 
+bins = [i * 5 for i in range(0, 52)]
+
+frameWidth = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+frameHeight = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+heatmap = np.zeros((frameHeight, frameWidth))
+
 idx = 0
 while(cap.isOpened()):
     ret, frame = cap.read()
 
     if ret:
+        # mask array using threshold (out of 255)
         mask = np.where(frame > threshold, 255, 0).astype(np.uint8)
         lit = np.count_nonzero(mask)
 
+        # line chart of event rate
         chart_arr.append({"frame": idx, "events": lit})
+
+        # histogram
+        if (idx == 0):
+            hist = np.histogram(frame, bins)
+        else:
+            hist += np.histogram(frame, bins)
+
+        # heatmap
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) # convert to grayscale
+        heatmap = np.add(heatmap, np.where(gray > threshold, 1, 0))
 
         event_count += lit
     else:
@@ -32,4 +61,31 @@ while(cap.isOpened()):
     
 cap.release()
 
-print(json.dumps({"eventCount": event_count, "eventsTime": chart_arr}))
+# clean up histogram data
+hist_values = hist[0]
+for i in range(2, len(hist), 2):
+    hist_values = np.add(hist_values, hist[i])
+
+# get the top 10 pixels of interest based on event count
+# get the top ten pixels of interest
+max_events = np.unique(heatmap)
+pixel_data = dict()
+count = 0
+idx = -1
+while count < 10:
+    result = np.where(heatmap == max_events[idx])
+    values = list(zip(result[1].tolist(), result[0].tolist()))
+    count += len(values)
+    if count <= 10: # sometimes we get a huge bin here
+        pixel_data[str(int(max_events[idx]))] = values
+
+    idx -= 1
+
+print(json.dumps(
+    {
+        "eventCount": event_count, 
+        "eventsTime": chart_arr, 
+        "histogram": {"values": hist_values.tolist(), "bins": bins}, 
+        "hotpixels": pixel_data,
+    }
+))

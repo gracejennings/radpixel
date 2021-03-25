@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col } from "antd";
 import "./Workspace.css";
-import { GraphContainer } from "./GraphContainer";
+import { VerticalDataContainer } from "./VerticalDataContainer";
 import { VideoPlayer } from "./VideoPlayer";
-import { StatsContainer } from "./StatsContainer";
+import { HorizontalDataContainer } from "./HorizontalDataContainer";
 import { ControlBar } from "./ControlBar";
 
 const electron = window.require("electron");
@@ -18,10 +18,12 @@ export const Workspace = (props) => {
   const [videoSrc, setVideoSrc] = useState(props.videoSrc);
   const [videoDuration, setVideoDuration] = useState(null); // hacky @TODO clean this up
 
-  const [eventThreshold, setEventThreshold] = useState("150"); // this must be a string!!
+  const [eventThreshold, setEventThreshold] = useState(150);
   const [eventCount, setEventCount] = useState(null);
+  const [pixelData, setPixelData] = useState(null); // info on hot pixels. {num frames: [pixel coords]}
 
   const [lineChartData, setLineChartData] = useState(null);
+  const [histogramData, setHistogramData] = useState(null);
 
   // for testing purposes with factorial 
   // const [number, setNumber] = useState(25);
@@ -30,6 +32,24 @@ export const Workspace = (props) => {
     setVideoState(newState);
   };
 
+  const handleUploadClick = (e) => {
+    dialog
+      .showOpenDialog({
+        title: "Open Dialogue",
+        message: "First Dialog",
+        //pass 'openDirectory' to strictly open directories
+        properties: ["openFile"],
+      })
+      .then((result) => {
+        shell.openPath(result.filePaths[0]);
+        console.log(result.filePaths[0]);
+      });
+  };
+
+  const handleThresholdChange = (val) => {
+    setEventThreshold(val);
+  }
+
   useEffect(() => {
     // this is an expensive query, so let's make sure we only run it when necessary
     if (!eventCount && !lineChartData) {
@@ -37,10 +57,11 @@ export const Workspace = (props) => {
       // will send via the main process after processing the data we
       // send from visiable renderer process
       ipcRenderer.on("MESSAGE_FROM_BACKGROUND_VIA_MAIN", (event, args) => {
-        console.log("got message from the background: ", JSON.parse(args));
         const aggData = JSON.parse(args);
         setEventCount(aggData.eventCount);
         setLineChartData(aggData.eventsTime);
+        setHistogramData(aggData.histogram);
+        setPixelData(aggData.hotpixels);
       });
 
       // trigger event to start background process
@@ -52,7 +73,7 @@ export const Workspace = (props) => {
           // number
           //  "/Users/juyoungsong/Desktop/Senior_Project/radpixel/radpixel-electron/public/alpha_manyevents.mp4",
           videoSrc,
-          "150",
+          eventThreshold.toString(),
         ],
       });
     }
@@ -61,7 +82,7 @@ export const Workspace = (props) => {
   return (
     <div style={{ height: "100vh" }}>
       <Row className="body-row">
-        <Col span={16}>
+        <Col span={16} style={{ bottom: "60px", top: "0px" }}>
           <Row style={{ height: "80%" }}>
             <VideoPlayer
               videoState={videoState}
@@ -73,46 +94,30 @@ export const Workspace = (props) => {
             />
           </Row>
           <Row align="middle" style={{ height: "20%" }}>
-            <StatsContainer
-              eventThreshold={eventThreshold}
-              eventCount={eventCount}
-            />
+            <HorizontalDataContainer lineChartData={lineChartData} />
           </Row>
         </Col>
-        <Col span={8}>
-          <Row style={{ height: "100%" }}>
-            <GraphContainer lineChartData={lineChartData} />
+        <Col span={8} style={{ bottom: "60px", top: "0px" }}>
+          <Row >
+            <VerticalDataContainer
+              eventThreshold={eventThreshold}
+              thresholdChange={(val) => handleThresholdChange(val)}
+              eventCount={eventCount}
+              pixelData={pixelData}
+              histogramData={histogramData}
+            />
           </Row>
         </Col>
       </Row>
       <Row className="footer-row">
         <Col span={24}>
-          {/* <button
-            id="upload"
-            onClick={() => {
-              dialog
-                .showOpenDialog({
-                  title: "Open Dialogue",
-                  message: "First Dialog",
-                  //pass 'openDirectory' to strictly open directories
-                  properties: ["openFile"],
-                })
-                .then((result) => {
-                  shell.openPath(result.filePaths[0]);
-                  console.log(result.filePaths[0]);
-                  setVideoSrc(result.filePaths[0]);
-                  setNumber(3);
-                });
-            }}
-          >
-            Upload File{" "}
-          </button> */}
           <ControlBar
             videoState={videoState}
             changeVideoState={(newState) => changeVideoState(newState)}
             currentTime={videoTime}
             updateTime={(time) => setVideoTime(time)}
             videoDuration={videoDuration}
+            uploadClick={() => handleUploadClick()}
           />
         </Col>
       </Row>
