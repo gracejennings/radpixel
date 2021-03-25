@@ -15,7 +15,7 @@ const { dialog } = remote;
 export const Workspace = (props) => {
   const [videoState, setVideoState] = useState("pause"); // one of: "pause", "play", "ffw"
   const [videoTime, setVideoTime] = useState(0); // in seconds
-  const [videoSrc, setVideoSrc] = useState("alpha_manyevents.mp4");
+  const [videoSrc, setVideoSrc] = useState(props.videoSrc);
   const [videoDuration, setVideoDuration] = useState(null); // hacky @TODO clean this up
 
   const [eventThreshold, setEventThreshold] = useState(150);
@@ -24,6 +24,9 @@ export const Workspace = (props) => {
 
   const [lineChartData, setLineChartData] = useState(null);
   const [histogramData, setHistogramData] = useState(null);
+
+  // for testing purposes with factorial 
+  // const [number, setNumber] = useState(25);
 
   const changeVideoState = (newState) => {
     setVideoState(newState);
@@ -64,9 +67,12 @@ export const Workspace = (props) => {
       // trigger event to start background process
       // must pass multiple arguments as an array of strings
       // this query can take up to 50 seconds. Be patient.
+      console.log("Starting the background w videoSrc: " + videoSrc)
       ipcRenderer.send("START_BACKGROUND_VIA_MAIN", {
         data: [
-          "/Users/willmiller/Projects/eece4950/radpixel/radpixel-electron/public/alpha_manyevents.mp4",
+          // number
+          //  "/Users/juyoungsong/Desktop/Senior_Project/radpixel/radpixel-electron/public/alpha_manyevents.mp4",
+          videoSrc,
           eventThreshold.toString(),
         ],
       });
@@ -84,6 +90,7 @@ export const Workspace = (props) => {
               videoTime={videoTime}
               updateTime={(time) => setVideoTime(time)}
               updateDuration={(duration) => setVideoDuration(duration)}
+              updateVideoSrc={(src) => setVideoSrc(src)}
             />
           </Row>
           <Row align="middle" style={{ height: "20%" }}>

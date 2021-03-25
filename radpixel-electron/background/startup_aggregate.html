@@ -11,8 +11,10 @@
 
         log.info('In the background on start processing, data is ', data);
 		
-        let pyshell = new PythonShell(path.join(__dirname, '/../scripts/startup_aggregate.py'), {
-			pythonPath: path.join(__dirname, '/../scripts/.venv/bin/python3'),
+		// need a fully qualified for startup_agreaget too byt that is what __dirname
+        let pyshell = new PythonShell(path.join(__dirname, '/../scripts/startup-aggregate.py'), {
+			// need fully qualified python path
+			pythonPath: '/opt/anaconda3/bin/python3',
 			args: data,
 		});
 
