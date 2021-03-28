@@ -1,31 +1,45 @@
 <script>
-	const { PythonShell } = require('python-shell');
-	const { ipcRenderer } = require('electron');
-	const path = require('path');
-    const log = require('electron-log');
+  const { PythonShell } = require("python-shell");
+  const { ipcRenderer } = require("electron");
+  const path = require("path");
+  const log = require("electron-log");
 
-	// when hidden renderer hasbeen initialized properly, start function that will start python script 
-	ipcRenderer.on('START_PROCESSING', (event, args) => {
-		//here the file system question comes in. Are we going to be passing a file path here?
-        const { data } = args;
 
-        log.info('In the background on start processing, data is ', data);
-		
-		// need a fully qualified for startup_agreaget too byt that is what __dirname
-        let pyshell = new PythonShell(path.join(__dirname, '/../scripts/startup-aggregate.py'), {
-			// need fully qualified python path
-			pythonPath: '/opt/anaconda3/bin/python3',
-			args: data,
-		});
+  // when hidden renderer hasbeen initialized properly, start function that will start python script
+  ipcRenderer.on("START_PROCESSING", (event, args) => {
+    // kill last process if it is still running
+	let lastPid = args.currentPid;
+	log.info('value of lastPid', lastPid);
+    if (lastPid) {
+      exec("kill " + lastPid, function (error, stdout, stderr) {
+        log.info("stdout: " + stdout);
+        log.info("stderr: " + stderr);
+        if (error !== null) {
+          log.info("exec error: " + error);
+        }
+      });
+    }
 
-		log.info('set up pythonshell successfully');
-		
-        pyshell.on('message', function(results) {
-            log.info("pyshell got a message: ", results);
-			ipcRenderer.send('MESSAGE_FROM_BACKGROUND', { message: results });
-		});
-	});
+    const { data } = args;
 
-	ipcRenderer.send('BACKGROUND_READY');
+    // need a fully qualified for startup_agreaget too byt that is what __dirname
+    let pyshell = new PythonShell(
+      path.join(__dirname, "/../scripts/startup_aggregate.py"),
+      {
+        // need fully qualified python path
+        pythonPath: path.join(__dirname, "/../scripts/.venv/bin/python3"),
+        args: data,
+      }
+    );
 
+    lastPid = pyshell.childProcess.pid;
+    log.info("starting process with pid: ", lastPid);
+	ipcRenderer.send("PID_FROM_BACKGROUND", { message: lastPid });
+
+    pyshell.on("message", function (results) {
+      ipcRenderer.send("MESSAGE_FROM_BACKGROUND", { message: results });
+    });
+  });
+
+  ipcRenderer.send("BACKGROUND_READY");
 </script>

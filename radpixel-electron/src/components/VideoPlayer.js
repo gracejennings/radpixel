@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import videojs from "video.js";
 import "./VideoPlayer.css";
 
@@ -92,7 +92,6 @@ class Video extends React.Component {
 
 // this is kinda just a wrapper for the videojs Video component. most props are passed straight through.
 export const VideoPlayer = (props) => {
-  console.log("creating the video player w src: " + props.videoSrc);
   const videoJsOptions = {
     controls: false, // @TODO video should be controlled from elsewhere
     sources: [
@@ -103,15 +102,28 @@ export const VideoPlayer = (props) => {
     ],
   };
 
+  const videoRef = useRef();
+  const previousUrl = useRef(props.videoSrc);
+
+  useEffect(() => {
+    if (previousUrl.current !== props.videoSrc && videoRef.current) {
+      videoRef.current.load();
+      previousUrl.current = props.videoSrc;
+    }
+  }, [props.videoSrc]);
+
   return (
     <div style={{ height: "100%", width: "100%" }}>
-      <Video
+      {/* {props.videoSrc ? <Video
         state={props.videoState}
         updateTime={(time) => props.updateTime(time)}
         options={videoJsOptions}
         updateDuration={(duration) => props.updateDuration(duration)}
         time={props.videoTime}
-      />
+      /> : <div>Upload a video to get started...</div>} */}
+      <video width="100%" height="100%" controls autoPlay ref={videoRef}>
+        <source src={props.videoSrc} type="video/mp4" />
+      </video>
     </div>
   );
 };

@@ -2,13 +2,34 @@ const electron = require("electron");
 const path = require("path");
 const url = require("url");
 
+// const express = require('express');
+// const cors = require('cors');
+
+// // backend file server
+// const expressApp = express();
+// expressApp.use(cors());
+
+// expressApp.get('/file/:name', function (req, res) {
+//   log.info('express GET with fname ', req.params.name);
+//   try {
+//     let filename = req.params.name;
+//     res.sendFile(filename);
+//   } catch (err) {
+//     log.error(err);
+//   }
+// });
+
+// expressApp.listen(8000, () => {
+//   log.info("fileserver listening on port 8000");
+// });
+
 // Electron logs are stored at ~/Library/Logs/radpixel-electron/
 const log = require('electron-log');
 
 const { app } = electron;
 const { BrowserWindow } = electron;
 
-const { ipcMain } = require('electron');
+const { ipcMain, protocol } = require('electron');
 
 let mainWindow;
 
@@ -36,9 +57,27 @@ function createWindow() {
   mainWindow.on("closed", function () {
     mainWindow = null;
   });
-}
+};
 
-app.on("ready", createWindow);
+app.on("ready", function() {
+  // register local file protocol
+  // https://www.electronjs.org/docs/api/protocol#protocolregisterfileprotocolscheme-handler
+  protocol.registerFileProtocol('local-video', (req, callback) => {
+    const url = req.url.replace('local-video://', '');
+    const decodedUrl = decodeURI(url) // Needed in case URL contains spaces
+    // this is where we would check that it is a valid file
+    
+    try {
+      return callback(decodedUrl);
+    } catch (err) {
+      log.error(err);
+      return callback(404);
+    }
+  });
+
+  // electron start
+  createWindow();
+});
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
@@ -101,11 +140,19 @@ ipcMain.on('MESSAGE_FROM_BACKGROUND', (event, args) => {
 	mainWindow.webContents.send('MESSAGE_FROM_BACKGROUND_VIA_MAIN', args.message);
 });
 
+// track Python process IDs
+let currentPid;
+ipcMain.on('PID_FROM_BACKGROUND', (event, args) => {
+  log.info("pid from background (electron.js): ", args.message);
+  currentPid = args.message;
+});
+
 
 // listening for the confirmation that the hidden renderer is ready
 ipcMain.on('BACKGROUND_READY', (event, args) => {
 	event.reply('START_PROCESSING', {
 		data: cache.data,
+    currentPid: currentPid,
 	});
 });
 
