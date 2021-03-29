@@ -105,6 +105,7 @@ export const Workspace = (props) => {
         <Col span={24}>
           <ControlBar
             videoState={videoState}
+            videoSrc={videoSrc}
             changeVideoState={(newState) => changeVideoState(newState)}
             currentTime={videoTime}
             updateTime={(time) => setVideoTime(time)}

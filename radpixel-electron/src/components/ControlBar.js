@@ -45,9 +45,13 @@ export const ControlBar = (props) => {
         <button
             id="upload"
             onClick={handleUploadClick}
+            style={{float: 'left'}}
         >
           Upload File{" "}
         </button>
+        <div>
+          {props.videoSrc ? `Current: ${props.videoSrc.split("/")[props.videoSrc.split("/").length-1]}`: ''}
+        </div>
       </UploadWrapper>
       <StepBackwardOutlined onClick={handleStepBackward} />
       {props.videoState === "pause" ? (

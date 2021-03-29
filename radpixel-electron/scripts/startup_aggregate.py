@@ -78,6 +78,8 @@ while count < 10:
     count += len(values)
     if count <= 10: # sometimes we get a huge bin here
         pixel_data[str(int(max_events[idx]))] = values
+    else:
+        pixel_data[str(int(max_events[idx]))] = values[:(10-count)]
 
     idx -= 1
 

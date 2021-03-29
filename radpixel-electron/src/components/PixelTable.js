@@ -36,6 +36,6 @@ export const PixelTable = (props) => {
     };
 
     return (
-        <Table dataSource={data()} columns={columns} pagination={false}/>
+        <Table dataSource={data()} columns={columns} pagination={false} scroll={{y: 200 }} />
     )
 };

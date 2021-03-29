@@ -65,6 +65,7 @@ app.on("ready", function() {
   protocol.registerFileProtocol('local-video', (req, callback) => {
     const url = req.url.replace('local-video://', '');
     const decodedUrl = decodeURI(url) // Needed in case URL contains spaces
+    
     // this is where we would check that it is a valid file
     
     try {

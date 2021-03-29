@@ -76,9 +76,9 @@ export const VerticalDataContainer = (props) => {
       <LabelWrapper>
         <Title level={4}>Hot pixel data</Title>
       </LabelWrapper>
-      <StatsWrapper>
+      <PlotWrapper>
         <PixelTable pixelData={props.pixelData} />
-      </StatsWrapper>
+      </PlotWrapper>
       <Divider />
       <LabelWrapper>
         <Title level={4}>Plots</Title>

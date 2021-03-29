@@ -1,129 +1,81 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import videojs from "video.js";
 import "./VideoPlayer.css";
 
 const TIME_GRANULARITY = 10; // number of milliseconds between updates
 
-// this code ripped straight from videojs docs: https://docs.videojs.com/tutorial-react.html
-// I hate class components!!! >:( @TODO turn this into a functional component
-class Video extends React.Component {
-  componentDidMount() {
-    this.player = videojs(
-      this.videoNode,
-      this.props.options,
-      function onPlayerReady() {
-        console.log("Video.js Ready", this);
-      }
-    );
-    this.player.fill(true);
-
-    switch (this.props.state) {
-      case "play":
-        this.player.playbackRate(1.0);
-        this.player.play();
-        break;
-      case "pause":
-        this.player.pause();
-        break;
-      case "ffw":
-        this.player.playbackRate(2.0);
-        this.player.play();
-        break;
-      default:
-        this.player.pause(); // maybe??
-    }
-
-    this.duration = 0; // we'll set this value a little later once the component updates
-
-    this.interval = setInterval(
-      () => this.props.updateTime(this.player.currentTime()),
-      TIME_GRANULARITY
-    );
-  }
-
-  componentDidUpdate(prevProps) {
-    switch (this.props.state) {
-      case "play":
-        this.player.playbackRate(1.0);
-        this.player.play();
-        break;
-      case "pause":
-        this.player.pause();
-        break;
-      case "ffw":
-        this.player.playbackRate(2.0);
-        this.player.play();
-        break;
-      default:
-        this.player.pause(); // maybe??
-    }
-
-    // sometimes the duration is only computed once the video has started. known issue
-    if (this.player.duration() && this.player.duration() !== this.duration) {
-      this.duration = this.player.duration();
-      this.props.updateDuration(this.player.duration());
-    }
-
-    // this is to handle the user changing the video time, e.g. skip-forward or skip-backward
-    this.player.currentTime(this.props.time);
-  }
-
-  componentWillUnmount() {
-    if (this.player) {
-      this.player.dispose();
-    }
-
-    clearInterval(this.interval);
-  }
-
-  render() {
-    return (
-      <div style={{ height: "100%", width: "100%" }}>
-        <div data-vjs-player>
-          <video
-            ref={(node) => (this.videoNode = node)}
-            className="video-js"
-          ></video>
-        </div>
-      </div>
-    );
-  }
-}
-
 // this is kinda just a wrapper for the videojs Video component. most props are passed straight through.
 export const VideoPlayer = (props) => {
-  const videoJsOptions = {
-    controls: false, // @TODO video should be controlled from elsewhere
-    sources: [
-      {
-        src: props.videoSrc,
-        type: "video/mp4",
-      },
-    ],
-  };
+  const [duration, setDuration] = useState(0);
 
   const videoRef = useRef();
   const previousUrl = useRef(props.videoSrc);
 
   useEffect(() => {
+    // reload video if source changed
     if (previousUrl.current !== props.videoSrc && videoRef.current) {
       videoRef.current.load();
       previousUrl.current = props.videoSrc;
     }
-  }, [props.videoSrc]);
+
+    let interval; // for data update
+
+    if (videoRef.current) {
+      // external control handling
+      switch (props.videoState) {
+        case "play":
+          videoRef.current.playbackRate = 1.0;
+          videoRef.current.play();
+          break;
+        case "pause":
+          videoRef.current.pause();
+          break;
+        case "ffw":
+          videoRef.current.playbackRate = 2.0;
+          videoRef.current.play();
+          break;
+        default:
+          videoRef.current.pause(); // maybe ??
+      }
+
+      // data update interval
+      interval = setInterval(
+        () => props.updateTime(videoRef.current.currentTime),
+        TIME_GRANULARITY
+      );
+
+      // this is to handle the user changing the video time, e.g. skip-forward or skip-backward
+      if (videoRef.current?.currentTime) {
+        videoRef.current.currentTime = props.videoTime;
+      }
+    }
+
+    // didUnmount
+    return function () {
+      clearInterval(interval);
+    };
+  }, [props.videoSrc, props.videoState, props.videoTime]);
+
+  const onDurationReady = (e) => {
+    setDuration(e.target.duration);
+    props.updateDuration(e.target.duration);
+  };
 
   return (
     <div style={{ height: "100%", width: "100%" }}>
-      {/* {props.videoSrc ? <Video
-        state={props.videoState}
-        updateTime={(time) => props.updateTime(time)}
-        options={videoJsOptions}
-        updateDuration={(duration) => props.updateDuration(duration)}
-        time={props.videoTime}
-      /> : <div>Upload a video to get started...</div>} */}
-      <video width="100%" height="100%" controls autoPlay ref={videoRef}>
-        <source src={props.videoSrc} type="video/mp4" />
-      </video>
+      {props.videoSrc ? (
+        <video
+          width="100%"
+          height="100%"
+          ref={videoRef}
+          style={{ objectFit: "fill" }}
+          onLoadedMetadata={(e) => onDurationReady(e)}
+        >
+          <source src={props.videoSrc} type="video/mp4" />
+        </video>
+      ) : (
+        <div>Upload a video to get started...</div>
+      )}
     </div>
   );
 };
