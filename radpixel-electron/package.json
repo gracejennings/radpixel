@@ -1,6 +1,11 @@
 {
   "name": "radpixel-electron",
   "version": "0.1.0",
+  "homepage": "https://github.com/gracejennings/radpixel",
+  "author": {
+    "name": "Radpixels",
+    "email": "radpixels@vanderbilt.edu"
+  },
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.5.0",
@@ -26,7 +31,9 @@
     "react-start": "BROWSER=NONE react-scripts start",
     "electron-start": "DEV=1 electron .",
     "start": "concurrently 'npm run react-start' 'wait-on http://localhost:3000/ && npm run electron-start'",
-    "build": "react-scripts build",
+    "react-build": "react-scripts build",
+    "electron-build-linux": "electron-builder --linux -c.extraMetadata.main=build/electron.js",
+    "build-linux": "npm run react-build && npm run electron-build-linux",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -52,7 +59,24 @@
   "devDependencies": {
     "concurrently": "^5.3.0",
     "electron": "^11.2.2",
+    "electron-builder": "^22.10.5",
     "prettier": "2.2.1",
     "wait-on": "^5.2.1"
+  },
+  "build": {
+    "appId": "Radpixel",
+    "asar": false,
+    "linux": {
+      "target": [
+        "rpm"
+      ]
+    },
+    "files": [
+      "background/**/*",
+      "build/**/*",
+      "node_modules/**/*",
+      "scripts/**/*"
+    ],
+    "extends": null
   }
 }

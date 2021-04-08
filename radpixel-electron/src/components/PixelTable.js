@@ -1,6 +1,9 @@
 import { Table } from "antd";
+import { useEffect, useState } from "react";
 
 export const PixelTable = (props) => {
+
+    const [data, setData] = useState([]);
 
     const columns = [
         {
@@ -15,7 +18,7 @@ export const PixelTable = (props) => {
         },
     ];
 
-    const data = () => {
+    const formatData = () => {
         const dataAr = [];
 
         // Object.entries will throw if props is null
@@ -24,7 +27,7 @@ export const PixelTable = (props) => {
                 console.log(`${index}: ${key} = ${value}`);
                 for (var i = 0; i < props.pixelData[key].length; ++i) {
                     dataAr.push({
-                        key: index + i,
+                        key: i,
                         count: key,
                         coords: `(${props.pixelData[key][i][0]}, ${props.pixelData[key][i][1]})`,
                     });
@@ -32,10 +35,14 @@ export const PixelTable = (props) => {
             });
         }
         
-        return dataAr;
+        setData(dataAr);
     };
 
+    useEffect(() => {
+        formatData();
+    }, [props.pixelData]);
+
     return (
-        <Table dataSource={data()} columns={columns} pagination={false} scroll={{y: 200 }} />
+        <Table dataSource={data} columns={columns} pagination={false} scroll={{y: 200 }} />
     )
 };

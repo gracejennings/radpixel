@@ -10,30 +10,30 @@
     // kill last process if it is still running
 	let lastPid = args.currentPid;
 	log.info('value of lastPid', lastPid);
-    if (lastPid) {
-      exec("kill " + lastPid, function (error, stdout, stderr) {
-        log.info("stdout: " + stdout);
-        log.info("stderr: " + stderr);
-        if (error !== null) {
-          log.info("exec error: " + error);
-        }
-      });
-    }
-
-    const { data } = args;
-
-    // need a fully qualified for startup_agreaget too byt that is what __dirname
-    let pyshell = new PythonShell(
-      path.join(__dirname, "/../scripts/startup_aggregate.py"),
-      {
-        // need fully qualified python path
-        pythonPath: path.join(__dirname, "/../scripts/.venv/bin/python3"),
-        args: data,
+  if (lastPid) {
+    exec("kill " + lastPid, function (error, stdout, stderr) {
+      log.info("stdout: " + stdout);
+      log.info("stderr: " + stderr);
+      if (error !== null) {
+        log.info("exec error: " + error);
       }
-    );
+    });
+  }
 
-    lastPid = pyshell.childProcess.pid;
-    log.info("starting process with pid: ", lastPid);
+  const { data } = args;
+
+  // need a fully qualified for startup_agreaget too byt that is what __dirname
+  let pyshell = new PythonShell(
+    path.join(__dirname, "/../scripts/startup_aggregate.py"),
+    {
+      // need fully qualified python path
+      pythonPath: path.join(__dirname, "/../scripts/.venv/bin/python3"),
+      args: data,
+    }
+  );
+
+  lastPid = pyshell.childProcess.pid;
+  log.info("starting process with pid: ", lastPid);
 	ipcRenderer.send("PID_FROM_BACKGROUND", { message: lastPid });
 
     pyshell.on("message", function (results) {

@@ -13,7 +13,7 @@ const remote = electron.remote;
 const { dialog } = remote;
 
 export const Workspace = (props) => {
-  const [videoState, setVideoState] = useState("pause"); // one of: "pause", "play", "ffw"
+  const [videoState, setVideoState] = useState("pause"); // one of: "pause", "play", "ffw", "end", "beg"
   const [videoTime, setVideoTime] = useState(0); // in seconds
   const [videoSrc, setVideoSrc] = useState(null);
   const [videoDuration, setVideoDuration] = useState(null); // hacky @TODO clean this up
@@ -108,8 +108,6 @@ export const Workspace = (props) => {
             videoSrc={videoSrc}
             changeVideoState={(newState) => changeVideoState(newState)}
             currentTime={videoTime}
-            updateTime={(time) => setVideoTime(time)}
-            videoDuration={videoDuration}
             uploadClick={() => handleUploadClick()}
           />
         </Col>

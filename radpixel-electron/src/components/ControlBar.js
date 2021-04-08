@@ -25,14 +25,12 @@ const UploadWrapper = styled.div`
 export const ControlBar = (props) => {
   // clicking step backward sends the video to the beginning in its paused state
   const handleStepBackward = () => {
-    props.updateTime(0);
-    props.changeVideoState("pause");
+    props.changeVideoState("beg");
   };
 
   // clicking step forward sends the video to the end in paused state
   const handleStepForward = () => {
-    props.updateTime(props.videoDuration);
-    props.changeVideoState("pause");
+    props.changeVideoState("end");
   };
 
   const handleUploadClick = () => {
@@ -54,10 +52,10 @@ export const ControlBar = (props) => {
         </div>
       </UploadWrapper>
       <StepBackwardOutlined onClick={handleStepBackward} />
-      {props.videoState === "pause" ? (
-        <CaretRightOutlined onClick={() => props.changeVideoState("play")} />
-      ) : (
+      {(props.videoState === "play" || props.videoState === "ffw") ? (
         <PauseOutlined onClick={() => props.changeVideoState("pause")} />
+      ) : (
+        <CaretRightOutlined onClick={() => props.changeVideoState("play")} />
       )}
       {props.videoState === "ffw" ? (
         <FastForwardOutlined
