@@ -1,7 +1,17 @@
+import { VideoCameraFilled } from "@ant-design/icons";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import styled from "styled-components";
 import "./VideoPlayer.css";
 
 const TIME_GRANULARITY = 10; // number of milliseconds between updates
+
+const Placeholder = styled.div`
+  text-align: center;
+  background-color: #c0c0c0;
+  width: 100%;
+  height: 100%;
+  padding: 180px 0;
+`;
 
 // this is kinda just a wrapper for the videojs Video component. most props are passed straight through.
 export const VideoPlayer = (props) => {
@@ -17,7 +27,7 @@ export const VideoPlayer = (props) => {
       videoRef.current.load();
       previousUrl.current = props.videoSrc;
 
-      console.log('setInterval call');
+      console.log("setInterval call");
       const interval = setInterval(() => {
         props.updateTime(videoRef.current.currentTime);
       }, TIME_GRANULARITY);
@@ -26,10 +36,9 @@ export const VideoPlayer = (props) => {
 
     // didUnmount
     return function cleanup() {
-      console.log('clearing interval');
+      console.log("clearing interval");
       clearInterval(intervalId);
     };
-
   }, [props.videoSrc]);
 
   useEffect(() => {
@@ -58,7 +67,7 @@ export const VideoPlayer = (props) => {
           videoRef.current.pause(); // maybe ??
       }
     }
-  }, [props.videoState])
+  }, [props.videoState]);
 
   const onDurationReady = (e) => {
     setDuration(e.target.duration);
@@ -75,10 +84,13 @@ export const VideoPlayer = (props) => {
           style={{ objectFit: "fill" }}
           onLoadedMetadata={(e) => onDurationReady(e)}
         >
-          <source src={props.videoSrc} type="video/mp4" />
+          <source src={`local-video://${props.videoSrc}`} type="video/mp4" />
         </video>
       ) : (
-        <div>Upload a video to get started...</div>
+        <Placeholder>
+          <div>Upload a video to get started...</div>
+          <VideoCameraFilled style={{ fontSize: 40, color: "#505050" }} />
+        </Placeholder>
       )}
     </div>
   );

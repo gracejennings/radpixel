@@ -1,7 +1,7 @@
 {
   "name": "radpixel-electron",
   "version": "0.1.0",
-  "homepage": "https://github.com/gracejennings/radpixel",
+  "homepage": "./",
   "author": {
     "name": "Radpixels",
     "email": "radpixels@vanderbilt.edu"
@@ -75,7 +75,7 @@
       "background/**/*",
       "build/**/*",
       "node_modules/**/*",
-      "scripts/**/*"
+      "scripts/startup_aggregate.py"
     ],
     "extends": null
   }

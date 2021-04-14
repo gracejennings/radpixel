@@ -4,11 +4,10 @@ import { Startpage } from "./components/Startpage";
 import { Workspace } from "./components/Workspace";
 
 class App extends Component {
-  
   render() {
     return (
       <div>
-        <Workspace />
+        <Startpage />
       </div>
     );
   }

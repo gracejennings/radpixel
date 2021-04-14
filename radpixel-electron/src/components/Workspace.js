@@ -13,6 +13,8 @@ const remote = electron.remote;
 const { dialog } = remote;
 
 export const Workspace = (props) => {
+  const [pythonScriptRunning, setPythonScriptRunning] = useState(false);
+
   const [videoState, setVideoState] = useState("pause"); // one of: "pause", "play", "ffw", "end", "beg"
   const [videoTime, setVideoTime] = useState(0); // in seconds
   const [videoSrc, setVideoSrc] = useState(null);
@@ -41,19 +43,37 @@ export const Workspace = (props) => {
       })
       .then((result) => {
         if (typeof result.filePaths[0] != "undefined") {
-          setVideoSrc(`local-video://${result.filePaths[0]}`);
+          setVideoSrc(result.filePaths[0]);
 
           // trigger event to start background process
           // must pass multiple arguments as an array of strings
           // this query can take up to 50 seconds. Be patient.
-          console.log("Starting the background w videoSrc: " + result.filePaths[0]);
+          console.log(
+            "Starting the background w videoSrc: " + result.filePaths[0]
+          );
 
           ipcRenderer.send("START_BACKGROUND_VIA_MAIN", {
             data: [result.filePaths[0], eventThreshold.toString()],
+            pythonPath: props.pythonPath,
           });
+
+          setPythonScriptRunning(true);
         }
       });
   };
+
+  const handleRestart = () => {
+    console.log(
+      "Starting the background w videoSrc: " + videoSrc
+    );
+
+    ipcRenderer.send("START_BACKGROUND_VIA_MAIN", {
+      data: [videoSrc, eventThreshold.toString()],
+      pythonPath: props.pythonPath,
+    });
+
+    setPythonScriptRunning(true);
+  }
 
   const handleThresholdChange = (val) => {
     setEventThreshold(val);
@@ -69,14 +89,25 @@ export const Workspace = (props) => {
       setLineChartData(aggData.eventsTime);
       setHistogramData(aggData.histogram);
       setPixelData(aggData.hotpixels);
+
+      setPythonScriptRunning(false);
+    });
+
+    // listen for python PID
+    ipcRenderer.on("PID_FROM_BACKGROUND_VIA_MAIN", (event, args) => {
+      console.log("pid received: ", args);
+
+      if (!args) {
+        console.log('looks like there was an issue in the background...');
+      }
     });
   }, []);
 
   return (
     <div style={{ height: "100vh" }}>
       <Row className="body-row">
-        <Col span={16} style={{ bottom: "60px", top: "0px" }}>
-          <Row style={{ height: "80%" }}>
+        <Col span={13} style={{ bottom: "60px", top: "0px" }}>
+          <Row style={{ height: "60%" }}>
             <VideoPlayer
               videoState={videoState}
               videoSrc={videoSrc}
@@ -85,11 +116,11 @@ export const Workspace = (props) => {
               updateDuration={(duration) => setVideoDuration(duration)}
             />
           </Row>
-          <Row align="middle" style={{ height: "20%" }}>
+          <Row align="middle" style={{ height: "40%" }}>
             <HorizontalDataContainer lineChartData={lineChartData} />
           </Row>
         </Col>
-        <Col span={8} style={{ bottom: "60px", top: "0px" }}>
+        <Col span={11} style={{ bottom: "60px", top: "0px" }}>
           <Row>
             <VerticalDataContainer
               eventThreshold={eventThreshold}
@@ -97,6 +128,9 @@ export const Workspace = (props) => {
               eventCount={eventCount}
               pixelData={pixelData}
               histogramData={histogramData}
+              pythonScriptRunning={pythonScriptRunning}
+              videoSrc={videoSrc}
+              restartScript={() => handleRestart()}
             />
           </Row>
         </Col>

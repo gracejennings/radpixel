@@ -24,12 +24,12 @@ const url = require("url");
 // });
 
 // Electron logs are stored at ~/Library/Logs/radpixel-electron/
-const log = require('electron-log');
+const log = require("electron-log");
 
 const { app } = electron;
 const { BrowserWindow } = electron;
 
-const { ipcMain, protocol } = require('electron');
+const { ipcMain, protocol } = require("electron");
 
 let mainWindow;
 
@@ -42,13 +42,13 @@ function createWindow() {
         slashes: true,
       });
   mainWindow = new BrowserWindow({
-    title: 'RadPixel Radiation Detector',
+    title: "RadPixel Imager Irradiation Analyzer",
     width: 1200,
     height: 1000,
-    webPreferences: { 
+    webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
-    }
+    },
   });
 
   mainWindow.loadURL(startUrl);
@@ -57,17 +57,17 @@ function createWindow() {
   mainWindow.on("closed", function () {
     mainWindow = null;
   });
-};
+}
 
-app.on("ready", function() {
+app.on("ready", function () {
   // register local file protocol
   // https://www.electronjs.org/docs/api/protocol#protocolregisterfileprotocolscheme-handler
-  protocol.registerFileProtocol('local-video', (req, callback) => {
-    const url = req.url.replace('local-video://', '');
-    const decodedUrl = decodeURI(url) // Needed in case URL contains spaces
-    
+  protocol.registerFileProtocol("local-video", (req, callback) => {
+    const url = req.url.replace("local-video://", "");
+    const decodedUrl = decodeURI(url); // Needed in case URL contains spaces
+
     // this is where we would check that it is a valid file
-    
+
     try {
       return callback(decodedUrl);
     } catch (err) {
@@ -97,7 +97,8 @@ app.on("activate", () => {
 // temporary variable to store data while background
 // process is ready to start processing
 let cache = {
-	data: undefined,
+  data: undefined,
+  pythonPath: undefined,
 };
 
 // a window object outside the function scope prevents
@@ -107,53 +108,53 @@ let hiddenWindow;
 // This event listener will listen for request
 // from visible renderer process
 // args.data comes in as an array of strings
-ipcMain.on('START_BACKGROUND_VIA_MAIN', (event, args) => {
-
+ipcMain.on("START_BACKGROUND_VIA_MAIN", (event, args) => {
   log.info("starting background...");
 
-	const backgroundFileUrl = url.format({
-		pathname: path.join(__dirname, `../background/startup_aggregate.html`),
-		protocol: 'file:',
-		slashes: true,
-	});
-	hiddenWindow = new BrowserWindow({
-		show: false,
-		webPreferences: {
-			nodeIntegration: true,
-		},
-	});
-	hiddenWindow.loadURL(backgroundFileUrl);
+  const backgroundFileUrl = url.format({
+    pathname: path.join(__dirname, `../background/startup_aggregate.html`),
+    protocol: "file:",
+    slashes: true,
+  });
+  hiddenWindow = new BrowserWindow({
+    show: false,
+    webPreferences: {
+      nodeIntegration: true,
+    },
+  });
+  hiddenWindow.loadURL(backgroundFileUrl);
 
-	hiddenWindow.webContents.openDevTools();
+  hiddenWindow.webContents.openDevTools();
 
-	hiddenWindow.on('closed', () => {
-		hiddenWindow = null;
-	});
+  hiddenWindow.on("closed", () => {
+    hiddenWindow = null;
+  });
 
   // store this data; we'll get it later
-	cache.data = args.data;
+  cache.data = args.data;
+  cache.pythonPath = args.pythonPath;
 });
 
 // This event listener will listen for data being sent back
 // from the background renderer process
-ipcMain.on('MESSAGE_FROM_BACKGROUND', (event, args) => {
+ipcMain.on("MESSAGE_FROM_BACKGROUND", (event, args) => {
   //log.info("message from background (electron.js): ", args);
-	mainWindow.webContents.send('MESSAGE_FROM_BACKGROUND_VIA_MAIN', args.message);
+  mainWindow.webContents.send("MESSAGE_FROM_BACKGROUND_VIA_MAIN", args.message);
 });
 
 // track Python process IDs
 let currentPid;
-ipcMain.on('PID_FROM_BACKGROUND', (event, args) => {
-  log.info("pid from background (electron.js): ", args.message);
+ipcMain.on("PID_FROM_BACKGROUND", (event, args) => {
   currentPid = args.message;
-});
 
+  mainWindow.webContents.send("PID_FROM_BACKGROUND_VIA_MAIN", args.message);
+});
 
 // listening for the confirmation that the hidden renderer is ready
-ipcMain.on('BACKGROUND_READY', (event, args) => {
-	event.reply('START_PROCESSING', {
-		data: cache.data,
+ipcMain.on("BACKGROUND_READY", (event, args) => {
+  event.reply("START_PROCESSING", {
+    data: cache.data,
     currentPid: currentPid,
-	});
+    pythonPath: cache.pythonPath,
+  });
 });
-

@@ -7,9 +7,18 @@ import {
   ResponsiveContainer,
   BarChart,
   Bar,
+  Tooltip,
 } from "recharts";
-import { Slider, Typography, Statistic, Divider, InputNumber } from "antd";
+import {
+  Slider,
+  Typography,
+  Statistic,
+  Divider,
+  InputNumber,
+  Button,
+} from "antd";
 import { PixelTable } from "./PixelTable";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
@@ -30,6 +39,10 @@ const LabelWrapper = styled.div`
 
 export const VerticalDataContainer = (props) => {
   const [histBinsOmitted, setHistBinsOmitted] = useState(6);
+
+  const handleRunClick = () => {
+    props.restartScript();
+  };
 
   const formatData = () => {
     if (props.histogramData) {
@@ -63,12 +76,31 @@ export const VerticalDataContainer = (props) => {
           <div>Loading...</div>
         )}
         <div style={{ marginTop: 25 }}>
-          <InputNumber
-            min={0}
-            max={256}
-            defaultValue={props.eventThreshold}
-            onChange={(val) => props.thresholdChange(val)}
-          />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-around",
+              width: "50%",
+            }}
+          >
+            <InputNumber
+              min={0}
+              max={256}
+              defaultValue={props.eventThreshold}
+              onChange={(val) => props.thresholdChange(val)}
+            />
+            {props.videoSrc ? (
+              <Button
+                id="run"
+                onClick={handleRunClick}
+                type="primary"
+                icon={props.pythonScriptRunning ? <LoadingOutlined /> : null}
+                style={{ minWidth: 90 }}
+              >
+                {props.pythonScriptRunning ? "" : "Run Script"}
+              </Button>
+            ) : null}
+          </div>
           <div>Set pixel event threshold (out of 256)</div>
         </div>
       </StatsWrapper>
@@ -84,13 +116,14 @@ export const VerticalDataContainer = (props) => {
         <Title level={4}>Plots</Title>
       </LabelWrapper>
       <PlotWrapper>
-        <ResponsiveContainer width="99%" height={200}>
+        <ResponsiveContainer width="99%" height={200} style={{marginLeft: "30px"}}>
           {props.histogramData ? (
             <BarChart data={formatData()}>
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
               <XAxis dataKey="bin" />
               <YAxis />
               <Bar dataKey="count" fill="#8884d8" />
+              <Tooltip />
             </BarChart>
           ) : (
             <div>Loading chart data...</div>
@@ -112,17 +145,6 @@ export const VerticalDataContainer = (props) => {
           <div></div>
         )}
       </PlotWrapper>
-      {/* <PlotWrapper>
-        <ResponsiveContainer width="99%" height={200}>
-          <LineChart data={[{x: 0, y: 1}, {x: 1, y: 2}]}>
-            <Line type="monotone" dataKey="y" stroke="#8884d8" />
-            <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-            <XAxis dataKey="x" />
-            <YAxis />
-          </LineChart>
-        </ResponsiveContainer>
-        <Title level={5}>Example plot</Title>
-      </PlotWrapper> */}
     </>
   );
 };
