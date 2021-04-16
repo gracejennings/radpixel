@@ -1,14 +1,23 @@
 import React from "react";
 import styled from "styled-components";
 import {
+  Slider,
+  Typography,
+  Statistic,
+  Divider,
+  InputNumber,
+  Button,
+} from "antd";
+import {
   LineChart,
   Line,
   CartesianGrid,
   XAxis,
   YAxis,
   ResponsiveContainer,
+  Tooltip
 } from "recharts";
-import { Tooltip, Typography } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
@@ -17,10 +26,23 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
+const StatsContainer = styled.div`
+  padding: 0px 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+`;
+
 export const HorizontalDataContainer = (props) => {
+
+  const handleRunClick = () => {
+    props.restartScript();
+  };
+
   return (
     <Wrapper>
-      <ResponsiveContainer height="80%">
+      <Title level={4} style={{paddingTop: "15px"}}>Event count by video frame</Title>
+      <ResponsiveContainer height="45%">
         {props.lineChartData ? (
           <LineChart data={props.lineChartData}>
             <Line
@@ -38,7 +60,44 @@ export const HorizontalDataContainer = (props) => {
           <div>Loading chart data...</div>
         )}
       </ResponsiveContainer>
-      <Title level={4}>Event count by video frame</Title>
+      <Divider />
+      <StatsContainer>
+        {props.eventCount ? (
+            <Statistic
+              title={`Event count - pixels over threshold`}
+              value={props.eventCount}
+            />
+          ) : (
+            <div>Loading...</div>
+        )}
+        <div style={{ marginTop: 25 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-around",
+            }}
+          >
+            <InputNumber
+              min={0}
+              max={256}
+              defaultValue={props.eventThreshold}
+              onChange={(val) => props.thresholdChange(val)}
+            />
+            {props.videoSrc ? (
+              <Button
+                id="run"
+                onClick={handleRunClick}
+                type="primary"
+                icon={props.pythonScriptRunning ? <LoadingOutlined /> : null}
+                style={{ minWidth: 90 }}
+              >
+                {props.pythonScriptRunning ? "" : "Run Script"}
+              </Button>
+            ) : null}
+          </div>
+          <div>Set pixel event threshold (out of 256)</div>
+        </div>
+      </StatsContainer>
     </Wrapper>
   );
 };

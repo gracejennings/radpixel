@@ -23,6 +23,7 @@ export const Workspace = (props) => {
   const [eventThreshold, setEventThreshold] = useState(150);
   const [eventCount, setEventCount] = useState(null);
   const [pixelData, setPixelData] = useState(null); // info on hot pixels. {num frames: [pixel coords]}
+  const [quadrantData, setQuadrantData] = useState(null); // [top left, top right, bottom left, bottom right]
 
   const [lineChartData, setLineChartData] = useState(null);
   const [histogramData, setHistogramData] = useState(null);
@@ -89,6 +90,7 @@ export const Workspace = (props) => {
       setLineChartData(aggData.eventsTime);
       setHistogramData(aggData.histogram);
       setPixelData(aggData.hotpixels);
+      setQuadrantData(aggData.quadrants);
 
       setPythonScriptRunning(false);
     });
@@ -117,7 +119,15 @@ export const Workspace = (props) => {
             />
           </Row>
           <Row align="middle" style={{ height: "40%" }}>
-            <HorizontalDataContainer lineChartData={lineChartData} />
+            <HorizontalDataContainer 
+              lineChartData={lineChartData} 
+              eventCount={eventCount}
+              eventThreshold={eventThreshold}
+              thresholdChange={(val) => handleThresholdChange(val)}
+              pythonScriptRunning={pythonScriptRunning}
+              restartScript={() => handleRestart()}
+              videoSrc={videoSrc}
+            />
           </Row>
         </Col>
         <Col span={11} style={{ bottom: "60px", top: "0px" }}>
@@ -131,6 +141,7 @@ export const Workspace = (props) => {
               pythonScriptRunning={pythonScriptRunning}
               videoSrc={videoSrc}
               restartScript={() => handleRestart()}
+              quadrantData={quadrantData}
             />
           </Row>
         </Col>

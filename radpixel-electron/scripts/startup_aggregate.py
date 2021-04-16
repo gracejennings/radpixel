@@ -20,6 +20,7 @@ fname = sys.argv[1]
 threshold = int(sys.argv[2])
 
 event_count = 0
+quadrant_event_count = [0, 0, 0, 0] # top left, top right, bottom left, bottom right
 
 cap = cv2.VideoCapture(fname)
 
@@ -39,6 +40,15 @@ while(cap.isOpened()):
         # mask array using threshold (out of 255)
         mask = np.where(frame > threshold, 255, 0).astype(np.uint8)
         lit = np.count_nonzero(mask)
+
+        # split into quadrants
+        q1, q2, q3, q4 = [M for subMask in np.split(mask,2, axis = 0) for M in np.split(subMask,2, axis = 1)]
+
+        # aggregate event counts
+        quadrant_event_count[0] += np.count_nonzero(q1)
+        quadrant_event_count[1] += np.count_nonzero(q2)
+        quadrant_event_count[2] += np.count_nonzero(q3)
+        quadrant_event_count[3] += np.count_nonzero(q4)
 
         # line chart of event rate
         chart_arr.append({"frame": idx, "events": lit})
@@ -89,5 +99,6 @@ print(json.dumps(
         "eventsTime": chart_arr, 
         "histogram": {"values": hist_values.tolist(), "bins": bins}, 
         "hotpixels": pixel_data,
+        "quadrants": quadrant_event_count
     }
 ))
