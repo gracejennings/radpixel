@@ -168,7 +168,7 @@ export const VerticalDataContainer = (props) => {
       </PlotWrapper>
       <Divider />
       <LabelWrapper>
-        <Title level={4}>Plots</Title>
+        <Title level={4}>Pixel Value Histogram</Title>
       </LabelWrapper>
       <PlotWrapper>
         <ResponsiveContainer width="99%" height={200} style={{marginLeft: "30px"}}>
@@ -184,7 +184,6 @@ export const VerticalDataContainer = (props) => {
             <div>Loading chart data...</div>
           )}
         </ResponsiveContainer>
-        <Title level={5}>Pixel value histogram</Title>
         {props.histogramData ? (
           <div>
             <Slider

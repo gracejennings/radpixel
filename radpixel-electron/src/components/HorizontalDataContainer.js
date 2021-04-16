@@ -61,6 +61,7 @@ export const HorizontalDataContainer = (props) => {
         )}
       </ResponsiveContainer>
       <Divider />
+      <Title level={4} >Total Event Count and Threshold</Title>
       <StatsContainer>
         {props.eventCount ? (
             <Statistic
@@ -70,7 +71,7 @@ export const HorizontalDataContainer = (props) => {
           ) : (
             <div>Loading...</div>
         )}
-        <div style={{ marginTop: 25 }}>
+        <div>
           <div
             style={{
               display: "flex",
