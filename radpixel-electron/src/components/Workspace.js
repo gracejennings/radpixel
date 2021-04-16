@@ -44,7 +44,6 @@ export const Workspace = (props) => {
       })
       .then((result) => {
         if (typeof result.filePaths[0] != "undefined") {
-          setVideoSrc(result.filePaths[0]);
 
           // trigger event to start background process
           // must pass multiple arguments as an array of strings
@@ -58,6 +57,12 @@ export const Workspace = (props) => {
             pythonPath: props.pythonPath,
           });
 
+          setVideoSrc(result.filePaths[0]);
+          setEventCount(null)
+          setPixelData(null)
+          setLineChartData(null)
+          setHistogramData(null)
+          
           setPythonScriptRunning(true);
         }
       });
@@ -72,7 +77,10 @@ export const Workspace = (props) => {
       data: [videoSrc, eventThreshold.toString()],
       pythonPath: props.pythonPath,
     });
-
+    setEventCount(null)
+    setPixelData(null)
+    setLineChartData(null)
+    setHistogramData(null)
     setPythonScriptRunning(true);
   }
 
