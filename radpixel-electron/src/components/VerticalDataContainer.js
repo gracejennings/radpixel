@@ -16,13 +16,9 @@ import {
 import {
   Slider,
   Typography,
-  Statistic,
   Divider,
-  InputNumber,
-  Button,
 } from "antd";
 import { PixelTable } from "./PixelTable";
-import { LoadingOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
