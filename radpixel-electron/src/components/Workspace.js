@@ -58,10 +58,11 @@ export const Workspace = (props) => {
           });
 
           setVideoSrc(result.filePaths[0]);
-          setEventCount(null)
-          setPixelData(null)
-          setLineChartData(null)
-          setHistogramData(null)
+          setEventCount(null);
+          setPixelData(null);
+          setLineChartData(null);
+          setHistogramData(null);
+          setQuadrantData(null);
           
           setPythonScriptRunning(true);
         }
@@ -77,10 +78,11 @@ export const Workspace = (props) => {
       data: [videoSrc, eventThreshold.toString()],
       pythonPath: props.pythonPath,
     });
-    setEventCount(null)
-    setPixelData(null)
-    setLineChartData(null)
-    setHistogramData(null)
+    setEventCount(null);
+    setPixelData(null);
+    setLineChartData(null);
+    setHistogramData(null);
+    setQuadrantData(null);
     setPythonScriptRunning(true);
   }
 
