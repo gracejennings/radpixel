@@ -35,7 +35,7 @@ export const Startpage = (props) => {
   };
 
   const handleSystemClick = () => {
-    setPythonPath("python");
+    setPythonPath("python3");
     setPythonSelected(true);
   };
 
