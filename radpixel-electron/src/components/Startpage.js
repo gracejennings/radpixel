@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Workspace } from "./Workspace";
 import "./Startpage.css";
 import { Button, Typography, Space } from "antd";
 import { FileSearchOutlined } from "@ant-design/icons";
 
 const electron = window.require("electron");
-const { ipcRenderer } = electron;
-const { shell } = window.require("electron");
 const remote = electron.remote;
 const { dialog } = remote;
 const { Title, Text } = Typography;
@@ -27,7 +25,6 @@ export const Startpage = (props) => {
         // <Workspace />
         //shell.openPath(result.filePaths[0]);
         if (typeof result.filePaths[0] != "undefined") {
-          console.log(result.filePaths[0]);
           setPythonPath(result.filePaths[0]);
           setPythonSelected(true);
         }
@@ -35,7 +32,7 @@ export const Startpage = (props) => {
   };
 
   const handleSystemClick = () => {
-    setPythonPath("python");
+    setPythonPath("python3");
     setPythonSelected(true);
   };
 

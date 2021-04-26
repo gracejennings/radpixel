@@ -56,7 +56,7 @@ export const HorizontalDataContainer = (props) => {
             <Tooltip />
           </LineChart>
         ) : (
-          <div>Loading chart data...</div>
+          <div>{props.pythonScriptRunning ? "Loading chart data..." : "No data"}</div>
         )}
       </ResponsiveContainer>
       <Divider />
@@ -68,7 +68,7 @@ export const HorizontalDataContainer = (props) => {
               value={props.eventCount}
             />
           ) : (
-            <div>Loading...</div>
+            <div>{props.pythonScriptRunning ? "Loading..." : "No data"}</div>
         )}
         <div>
           <div

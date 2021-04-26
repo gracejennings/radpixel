@@ -28,21 +28,12 @@ const PlotWrapper = styled.div`
   margin-left: 10px;
 `;
 
-const StatsWrapper = styled.div`
-  width: 100%;
-  margin-left: 25px;
-`;
-
 const LabelWrapper = styled.div`
   margin-left: 15px;
 `;
 
 export const VerticalDataContainer = (props) => {
   const [histBinsOmitted, setHistBinsOmitted] = useState(6);
-
-  const handleRunClick = () => {
-    props.restartScript();
-  };
 
   const formatHistogramData = () => {
     if (props.histogramData) {
@@ -109,9 +100,6 @@ export const VerticalDataContainer = (props) => {
       }
     } 
 
-    console.log("fire!", formattedData);
-
-
     return formattedData;
 
   }
@@ -143,13 +131,14 @@ export const VerticalDataContainer = (props) => {
       </LabelWrapper>
       <div style={{width: "100%"}}>
         <ScatterChart width={300} height={220} style={{paddingLeft: "10%", paddingRight: "5%", marginBottom: "-40px"}}>
-          <XAxis dataKey="x" type="number" domain={[0,2]} tickCount={3} tick={<div />} />
-          <YAxis dataKey="y" type="number" domain={[0,2]} tickCount={3} tick={<div />} />
+          <XAxis dataKey="x" type="number" domain={[0,2]} tickCount={3} tick={() => <div />} />
+          <YAxis dataKey="y" type="number" domain={[0,2]} tickCount={3} tick={() => <div />} />
           <CartesianGrid />
-          {formatQuadrantData().map(el => (<Scatter 
+          {formatQuadrantData().map((el, idx) => (<Scatter 
             data={el.data}
             fill={el.color}
             shape={CustomShape}
+            key={`scatter${idx}`}
           >
             <LabelList dataKey="count" content={renderCustomLabel} />
           </Scatter>))}
@@ -167,7 +156,7 @@ export const VerticalDataContainer = (props) => {
         <Title level={4}>Pixel Value Histogram</Title>
       </LabelWrapper>
       <PlotWrapper>
-        <ResponsiveContainer width="99%" height={200} style={{marginLeft: "30px"}}>
+        <ResponsiveContainer height={200}>
           {props.histogramData ? (
             <BarChart data={formatHistogramData()}>
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
@@ -177,7 +166,7 @@ export const VerticalDataContainer = (props) => {
               <Tooltip />
             </BarChart>
           ) : (
-            <div>Loading chart data...</div>
+            <div>{props.pythonScriptRunning ? "Loading chart data..." : "No data"}</div>
           )}
         </ResponsiveContainer>
         {props.histogramData ? (

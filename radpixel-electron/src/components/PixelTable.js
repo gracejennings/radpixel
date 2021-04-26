@@ -17,27 +17,26 @@ export const PixelTable = (props) => {
     },
   ];
 
-  const formatData = () => {
-    const dataAr = [];
-
-    // Object.entries will throw if props is null
-    if (props.pixelData) {
-      Object.entries(props.pixelData).forEach(([key, value], index) => {
-        console.log(`${index}: ${key} = ${value}`);
-        for (var i = 0; i < props.pixelData[key].length; ++i) {
-          dataAr.push({
-            key: i,
-            count: key,
-            coords: `(${props.pixelData[key][i][0]}, ${props.pixelData[key][i][1]})`,
-          });
-        }
-      });
-    }
-
-    setData(dataAr);
-  };
-
   useEffect(() => {
+    const formatData = () => {
+      const dataAr = [];
+  
+      // Object.entries will throw if props is null
+      if (props.pixelData) {
+        Object.entries(props.pixelData).forEach(([key, value], index) => {
+          for (var i = 0; i < props.pixelData[key].length; ++i) {
+            dataAr.push({
+              key: index*10 + i,
+              count: key,
+              coords: `(${props.pixelData[key][i][0]}, ${props.pixelData[key][i][1]})`,
+            });
+          }
+        });
+      }
+  
+      setData(dataAr.reverse());
+    };
+    
     formatData();
   }, [props.pixelData]);
 

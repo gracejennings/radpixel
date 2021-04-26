@@ -64,12 +64,15 @@
     "wait-on": "^5.2.1"
   },
   "build": {
-    "appId": "Radpixel",
+    "appId": "RadPixel",
     "asar": false,
     "linux": {
       "target": [
         "rpm"
       ]
+    },
+    "rpm": {
+      "artifactName": "RadPixel.rpm"
     },
     "files": [
       "background/**/*",

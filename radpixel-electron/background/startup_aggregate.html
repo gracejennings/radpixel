@@ -9,13 +9,17 @@
     // kill last process if it is still running
     let lastPid = args.currentPid;
     log.info("value of lastPid", lastPid);
+    if (lastPid) {
+      // kill the process
+      try {
+        process.kill(lastPid);
+      } catch (e) {
+        log.info("error on process.kill:", e);
+      }
+    }
 
     const data = args.data;
     const pythonPath = args.pythonPath;
-
-    log.info("starting with python path", pythonPath);
-    log.info("script location", path.join(__dirname, "/../scripts/startup_aggregate.py"));
-    log.info("args", data);
 
     // need a fully qualified for startup_agreaget too byt that is what __dirname
     let pyshell = new PythonShell(
@@ -32,8 +36,17 @@
     log.info("starting process with pid: ", lastPid);
     ipcRenderer.send("PID_FROM_BACKGROUND", { message: lastPid });
 
+    pyshell.on("error", function (err) {
+      ipcRenderer.send("MESSAGE_FROM_BACKGROUND", { error: JSON.stringify(err, null, 2) });
+
+      log.info("python script error", err);
+    });
+
+    // results is json.dumps output from Python
     pyshell.on("message", function (results) {
-      ipcRenderer.send("MESSAGE_FROM_BACKGROUND", { message: results });
+      ipcRenderer.send("MESSAGE_FROM_BACKGROUND", {
+        message: JSON.parse(results),
+      });
     });
   });
 
