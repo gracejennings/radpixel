@@ -66,12 +66,10 @@ app.on("ready", function () {
     const url = req.url.replace("local-video://", "");
     const decodedUrl = decodeURI(url); // Needed in case URL contains spaces
 
-    // this is where we would check that it is a valid file
-
     try {
       return callback(decodedUrl);
     } catch (err) {
-      log.error(err);
+      log.error('Invalid video file selected:', err);
       return callback(404);
     }
   });
@@ -109,8 +107,6 @@ let hiddenWindow;
 // from visible renderer process
 // args.data comes in as an array of strings
 ipcMain.on("START_BACKGROUND_VIA_MAIN", (event, args) => {
-  log.info("starting background...");
-
   const backgroundFileUrl = url.format({
     pathname: path.join(__dirname, `../background/startup_aggregate.html`),
     protocol: "file:",
@@ -140,7 +136,6 @@ ipcMain.on("START_BACKGROUND_VIA_MAIN", (event, args) => {
 // On success, the data will be { message: data }
 // On error, the data will be { error: error message }
 ipcMain.on("MESSAGE_FROM_BACKGROUND", (event, args) => {
-  //log.info("message from background (electron.js): ", args);
   mainWindow.webContents.send("MESSAGE_FROM_BACKGROUND_VIA_MAIN", args);
 });
 
@@ -148,7 +143,7 @@ ipcMain.on("MESSAGE_FROM_BACKGROUND", (event, args) => {
 let currentPid;
 ipcMain.on("PID_FROM_BACKGROUND", (event, args) => {
   currentPid = args.message;
-  log.info('started process with PID', currentPid);
+  log.info('Started background process with PID', currentPid);
   mainWindow.webContents.send("PID_FROM_BACKGROUND_VIA_MAIN", args.message);
 });
 

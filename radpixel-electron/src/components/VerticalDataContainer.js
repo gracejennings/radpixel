@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   CartesianGrid,
@@ -13,11 +13,7 @@ import {
   Scatter,
   LabelList,
 } from "recharts";
-import {
-  Slider,
-  Typography,
-  Divider,
-} from "antd";
+import { Slider, Typography, Divider } from "antd";
 import { PixelTable } from "./PixelTable";
 
 const { Title } = Typography;
@@ -34,6 +30,7 @@ const LabelWrapper = styled.div`
 
 export const VerticalDataContainer = (props) => {
   const [histBinsOmitted, setHistBinsOmitted] = useState(6);
+  const [formattedQuadrantData, setFormattedQuadrantData] = useState([]);
 
   const formatHistogramData = () => {
     if (props.histogramData) {
@@ -54,94 +51,121 @@ export const VerticalDataContainer = (props) => {
     }
   };
 
-  // quadrantData always has 4 elements - top left, top right, bottom left, bottom right
-  const formatQuadrantData = () => {
-
-    const formattedData = [];
-
-    if (props.quadrantData) {
-      const total = props.quadrantData.reduce((a, b) => a + b, 0);
-      for (var i=0; i<4; ++i) {
-        let color;
-        if (props.quadrantData[i] / total < 0.25 ) {
-          color = "yellow";
-        } else if (props.quadrantData[i] / total < 0.50 ) {
-          color = "orange";
-        } else if (props.quadrantData[i] / total < 0.75 ) {
-          color = "red";
-        } else {
-          color = "purple";
-        }
-
-        let x;
-        let y;
-        if (i === 0) {
-          x = 0;
-          y = 1;
-        } else if (i === 1) {
-          x = 1;
-          y = 1;
-        } else if (i === 2) {
-          x = 0;
-          y = 0;
-        } else {
-          x = 1;
-          y = 0;
-        }
-
-        formattedData.push({
-          data: [{
-            count: props.quadrantData[i],
-            x: x,
-            y: y,
-          }],
-          color: color
-        });
-      }
-    } 
-
-    return formattedData;
-
-  }
-
   const CustomShape = (props) => {
     return (
-        <Rectangle
-          {...props}
-          height={87}
-          width={112}
-          x={props.x + 5}
-          y={props.y - 84}
-        />      
-    )
+      <Rectangle
+        {...props}
+        height={87}
+        width={112}
+        x={props.x + 5}
+        y={props.y - 84}
+      />
+    );
   };
 
-  const renderCustomLabel = ({x, y, width, height, value}) => {
+  const renderCustomLabel = ({ x, y, width, height, value }) => {
     return (
       <g>
-        <text x={x + 60} y={y - 35} textAnchor="middle" >{value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</text>
+        <text x={x + 60} y={y - 35} textAnchor="middle">
+          {value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+        </text>
       </g>
-    )
+    );
   };
+
+  useEffect(() => {
+    // quadrantData always has 4 elements - top left, top right, bottom left, bottom right
+    const formatQuadrantData = () => {
+      const formattedData = [];
+
+      if (props.quadrantData) {
+        const total = props.quadrantData.reduce((a, b) => a + b, 0);
+        for (var i = 0; i < 4; ++i) {
+          let color;
+          if (props.quadrantData[i] / total < 0.25) {
+            color = "yellow";
+          } else if (props.quadrantData[i] / total < 0.5) {
+            color = "orange";
+          } else if (props.quadrantData[i] / total < 0.75) {
+            color = "red";
+          } else {
+            color = "purple";
+          }
+
+          let x;
+          let y;
+          if (i === 0) {
+            x = 0;
+            y = 1;
+          } else if (i === 1) {
+            x = 1;
+            y = 1;
+          } else if (i === 2) {
+            x = 0;
+            y = 0;
+          } else {
+            x = 1;
+            y = 0;
+          }
+
+          formattedData.push({
+            data: [
+              {
+                count: props.quadrantData[i],
+                x: x,
+                y: y,
+              },
+            ],
+            color: color,
+          });
+        }
+      }
+      setFormattedQuadrantData(formattedData);
+    };
+
+    formatQuadrantData();
+  }, [props.quadrantData]);
 
   return (
     <>
       <LabelWrapper style={{ marginTop: 10 }}>
         <Title level={4}>Event Count by Quadrant</Title>
       </LabelWrapper>
-      <div style={{width: "100%"}}>
-        <ScatterChart width={300} height={220} style={{paddingLeft: "10%", paddingRight: "5%", marginBottom: "-40px"}}>
-          <XAxis dataKey="x" type="number" domain={[0,2]} tickCount={3} tick={() => <div />} />
-          <YAxis dataKey="y" type="number" domain={[0,2]} tickCount={3} tick={() => <div />} />
+      <div style={{ width: "100%" }}>
+        <ScatterChart
+          width={300}
+          height={220}
+          style={{
+            paddingLeft: "10%",
+            paddingRight: "5%",
+            marginBottom: "-40px",
+          }}
+        >
+          <XAxis
+            dataKey="x"
+            type="number"
+            domain={[0, 2]}
+            tickCount={3}
+            tick={() => <div />}
+          />
+          <YAxis
+            dataKey="y"
+            type="number"
+            domain={[0, 2]}
+            tickCount={3}
+            tick={() => <div />}
+          />
           <CartesianGrid />
-          {formatQuadrantData().map((el, idx) => (<Scatter 
-            data={el.data}
-            fill={el.color}
-            shape={CustomShape}
-            key={`scatter${idx}`}
-          >
-            <LabelList dataKey="count" content={renderCustomLabel} />
-          </Scatter>))}
+          {formattedQuadrantData.map((el, idx) => (
+            <Scatter
+              data={el.data}
+              fill={el.color}
+              shape={CustomShape}
+              key={`scatter${idx}`}
+            >
+              <LabelList dataKey="count" content={renderCustomLabel} />
+            </Scatter>
+          ))}
         </ScatterChart>
       </div>
       <Divider />
@@ -166,7 +190,9 @@ export const VerticalDataContainer = (props) => {
               <Tooltip />
             </BarChart>
           ) : (
-            <div>{props.pythonScriptRunning ? "Loading chart data..." : "No data"}</div>
+            <div>
+              {props.pythonScriptRunning ? "Loading chart data..." : "No data"}
+            </div>
           )}
         </ResponsiveContainer>
         {props.histogramData ? (

@@ -114,12 +114,12 @@ export const Workspace = (props) => {
         setShowErrorModal(true);
         
         setPythonScriptRunning(false);
-      } else if (args.message === "start") {
-        setFrameCount(aggData.frameCount);
-        console.log("Received the event count to intialize graph", frameCount);
-      } else if (args.message === "progress") {
-        setEventCount(aggData.eventCount);
-        setLineChartData(aggData.eventsTime);
+      } else if (args.message.message === "start") {
+        setFrameCount(args.message.frameCount);
+        console.log('frame count', args.message.frameCount);
+      } else if (args.message.message === "progress") {
+        setEventCount(args.message.eventCount);
+        setLineChartData(args.message.eventsTime);
       } else {
         // real data has already been parsed
         setEventCount(args.message.eventCount);

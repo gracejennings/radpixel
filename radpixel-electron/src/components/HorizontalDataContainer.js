@@ -49,15 +49,17 @@ export const HorizontalDataContainer = (props) => {
               dataKey="events"
               stroke="#8884d8"
               dot={false}
+              isAnimationActive={false}
             />
             <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
             <XAxis dataKey="frame" type="number" domain={[0, props.frameCount]}/>
-            <YAxis width={40} />
+            <YAxis />
             <Tooltip />
           </LineChart>
         ) : (
           <div>{props.pythonScriptRunning ? "Loading chart data..." : "No data"}</div>
         )}
+        {/* <div>`Frames: ${props.frameCount}`</div> */}
       </ResponsiveContainer>
       <Divider />
       <Title level={4} >Total Event Count and Threshold</Title>
