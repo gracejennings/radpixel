@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col } from "antd";
+import { Row, Col, Button, Modal } from "antd";
 import "./Workspace.css";
 import { VerticalDataContainer } from "./VerticalDataContainer";
 import { VideoPlayer } from "./VideoPlayer";
@@ -8,17 +8,18 @@ import { ControlBar } from "./ControlBar";
 
 const electron = window.require("electron");
 const { ipcRenderer } = electron;
-const { shell } = window.require("electron");
 const remote = electron.remote;
 const { dialog } = remote;
 
 export const Workspace = (props) => {
+  const [pythonPath, setPythonPath] = useState(props.pythonPath);
   const [pythonScriptRunning, setPythonScriptRunning] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [pythonErrorMessage, setPythonErrorMessage] = useState("");
 
   const [videoState, setVideoState] = useState("pause"); // one of: "pause", "play", "ffw", "end", "beg"
   const [videoTime, setVideoTime] = useState(0); // in seconds
   const [videoSrc, setVideoSrc] = useState(null);
-  const [videoDuration, setVideoDuration] = useState(null); // hacky @TODO clean this up
 
   const [eventThreshold, setEventThreshold] = useState(150);
   const [eventCount, setEventCount] = useState(null);
@@ -44,17 +45,12 @@ export const Workspace = (props) => {
       })
       .then((result) => {
         if (typeof result.filePaths[0] != "undefined") {
-
           // trigger event to start background process
           // must pass multiple arguments as an array of strings
           // this query can take up to 50 seconds. Be patient.
-          console.log(
-            "Starting the background w videoSrc: " + result.filePaths[0]
-          );
-
           ipcRenderer.send("START_BACKGROUND_VIA_MAIN", {
             data: [result.filePaths[0], eventThreshold.toString()],
-            pythonPath: props.pythonPath,
+            pythonPath: pythonPath,
           });
 
           setVideoSrc(result.filePaths[0]);
@@ -63,20 +59,33 @@ export const Workspace = (props) => {
           setLineChartData(null);
           setHistogramData(null);
           setQuadrantData(null);
-          
+
           setPythonScriptRunning(true);
         }
       });
   };
 
-  const handleRestart = () => {
-    console.log(
-      "Starting the background w videoSrc: " + videoSrc
-    );
+  const handleInterpreterChange = () => {
+    dialog
+      .showOpenDialog({
+        title: "Select Python Interpreter",
+        message: "Select Python Interpreter",
+        //pass 'openDirectory' to strictly open directories
+        properties: ["openFile"],
+      })
+      .then((result) => {
+        if (typeof result.filePaths[0] != "undefined") {
+          setPythonPath(result.filePaths[0]);
+          setShowErrorModal(false);
+          setVideoSrc(null);
+        }
+      });
+  };
 
+  const handleRestart = () => {
     ipcRenderer.send("START_BACKGROUND_VIA_MAIN", {
       data: [videoSrc, eventThreshold.toString()],
-      pythonPath: props.pythonPath,
+      pythonPath: pythonPath,
     });
     setEventCount(null);
     setPixelData(null);
@@ -84,7 +93,7 @@ export const Workspace = (props) => {
     setHistogramData(null);
     setQuadrantData(null);
     setPythonScriptRunning(true);
-  }
+  };
 
   const handleThresholdChange = (val) => {
     setEventThreshold(val);
@@ -95,22 +104,31 @@ export const Workspace = (props) => {
     // will send via the main process after processing the data we
     // send from visiable renderer process
     ipcRenderer.on("MESSAGE_FROM_BACKGROUND_VIA_MAIN", (event, args) => {
-      const aggData = JSON.parse(args);
-      setEventCount(aggData.eventCount);
-      setLineChartData(aggData.eventsTime);
-      setHistogramData(aggData.histogram);
-      setPixelData(aggData.hotpixels);
-      setQuadrantData(aggData.quadrants);
+      if (args.error) {
+        // error message has already been stringified, no need to parse
+        setPythonErrorMessage(args.error);
+        setShowErrorModal(true);
+      } else {
+        // real data has already been parsed
+        setEventCount(args.message.eventCount);
+        setLineChartData(args.message.eventsTime);
+        setHistogramData(args.message.histogram);
+        setPixelData(args.message.hotpixels);
+        setQuadrantData(args.message.quadrants);
+      }
 
       setPythonScriptRunning(false);
     });
 
     // listen for python PID
     ipcRenderer.on("PID_FROM_BACKGROUND_VIA_MAIN", (event, args) => {
-      console.log("pid received: ", args);
-
       if (!args) {
-        console.log('looks like there was an issue in the background...');
+        setPythonErrorMessage(
+          "The Python process was not created. Please make sure that you selected a valid Python interpreter on the local filesystem."
+        );
+        setShowErrorModal(true);
+
+        setPythonScriptRunning(false);
       }
     });
   }, []);
@@ -123,14 +141,12 @@ export const Workspace = (props) => {
             <VideoPlayer
               videoState={videoState}
               videoSrc={videoSrc}
-              videoTime={videoTime}
               updateTime={(time) => setVideoTime(time)}
-              updateDuration={(duration) => setVideoDuration(duration)}
             />
           </Row>
           <Row align="middle" style={{ height: "40%" }}>
-            <HorizontalDataContainer 
-              lineChartData={lineChartData} 
+            <HorizontalDataContainer
+              lineChartData={lineChartData}
               eventCount={eventCount}
               eventThreshold={eventThreshold}
               thresholdChange={(val) => handleThresholdChange(val)}
@@ -167,6 +183,18 @@ export const Workspace = (props) => {
           />
         </Col>
       </Row>
+      <Modal
+        title="Python Error"
+        visible={showErrorModal}
+        style={{ color: "red" }}
+        footer={[
+          <Button type="primary" onClick={handleInterpreterChange}>
+            Change Python Interpreter
+          </Button>,
+        ]}
+      >
+        <p>{pythonErrorMessage}</p>
+      </Modal>
     </div>
   );
 };

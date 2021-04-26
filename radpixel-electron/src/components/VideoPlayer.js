@@ -1,5 +1,5 @@
 import { VideoCameraFilled } from "@ant-design/icons";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import "./VideoPlayer.css";
 
@@ -19,28 +19,30 @@ export const VideoPlayer = (props) => {
   const [intervalId, setIntervalId] = useState();
 
   const previousUrl = useRef(props.videoSrc);
-  const videoRef = useRef();
+  const videoRef = useRef(null);
 
+  const onVideoLoaded = () => {
+    const interval = setInterval(() => {
+      props.updateTime(videoRef.current?.currentTime); // problematic!
+    }, TIME_GRANULARITY);
+
+    setIntervalId(interval);
+  }
+
+  // reload video if source changed
   useEffect(() => {
-    // reload video if source changed
     if (previousUrl.current !== props.videoSrc && videoRef.current) {
       videoRef.current.load();
       previousUrl.current = props.videoSrc;
-
-      console.log("setInterval call");
-      const interval = setInterval(() => {
-        props.updateTime(videoRef.current.currentTime);
-      }, TIME_GRANULARITY);
-      setIntervalId(interval);
     }
 
-    // didUnmount
-    return function cleanup() {
-      console.log("clearing interval");
+    // cleanup on unmount
+    return function() {
       clearInterval(intervalId);
-    };
-  }, [props.videoSrc]);
+    }
+  }, [props.videoSrc]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // handle external controls
   useEffect(() => {
     if (videoRef.current) {
       // external control handling
@@ -63,15 +65,15 @@ export const VideoPlayer = (props) => {
         case "beg":
           videoRef.current.pause();
           videoRef.current.currentTime = 0;
+          break;
         default:
           videoRef.current.pause(); // maybe ??
       }
     }
-  }, [props.videoState]);
+  }, [props.videoState]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onDurationReady = (e) => {
     setDuration(e.target.duration);
-    props.updateDuration(e.target.duration);
   };
 
   return (
@@ -83,6 +85,7 @@ export const VideoPlayer = (props) => {
           ref={videoRef}
           style={{ objectFit: "fill" }}
           onLoadedMetadata={(e) => onDurationReady(e)}
+          onLoadedData={onVideoLoaded}
         >
           <source src={`local-video://${props.videoSrc}`} type="video/mp4" />
         </video>

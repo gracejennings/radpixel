@@ -52,11 +52,11 @@ export const HorizontalDataContainer = (props) => {
             />
             <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
             <XAxis dataKey="frame" />
-            <YAxis width={40} />
+            <YAxis />
             <Tooltip />
           </LineChart>
         ) : (
-          <div>Loading chart data...</div>
+          <div>{props.pythonScriptRunning ? "Loading chart data..." : "No data"}</div>
         )}
       </ResponsiveContainer>
       <Divider />
@@ -68,7 +68,7 @@ export const HorizontalDataContainer = (props) => {
               value={props.eventCount}
             />
           ) : (
-            <div>Loading...</div>
+            <div>{props.pythonScriptRunning ? "Loading..." : "No data"}</div>
         )}
         <div>
           <div

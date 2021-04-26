@@ -27,3 +27,5 @@ yarn-error.log*
 
 # python environment and binary
 /scripts/.venv
+/scripts/Pipfile
+/scripts/Pipfile.lock

@@ -137,16 +137,18 @@ ipcMain.on("START_BACKGROUND_VIA_MAIN", (event, args) => {
 
 // This event listener will listen for data being sent back
 // from the background renderer process
+// On success, the data will be { message: data }
+// On error, the data will be { error: error message }
 ipcMain.on("MESSAGE_FROM_BACKGROUND", (event, args) => {
   //log.info("message from background (electron.js): ", args);
-  mainWindow.webContents.send("MESSAGE_FROM_BACKGROUND_VIA_MAIN", args.message);
+  mainWindow.webContents.send("MESSAGE_FROM_BACKGROUND_VIA_MAIN", args);
 });
 
 // track Python process IDs
 let currentPid;
 ipcMain.on("PID_FROM_BACKGROUND", (event, args) => {
   currentPid = args.message;
-
+  log.info('started process with PID', currentPid);
   mainWindow.webContents.send("PID_FROM_BACKGROUND_VIA_MAIN", args.message);
 });
 
