@@ -51,8 +51,8 @@ export const HorizontalDataContainer = (props) => {
               dot={false}
             />
             <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-            <XAxis dataKey="frame" />
-            <YAxis />
+            <XAxis dataKey="frame" type="number" domain={[0, props.frameCount]}/>
+            <YAxis width={40} />
             <Tooltip />
           </LineChart>
         ) : (

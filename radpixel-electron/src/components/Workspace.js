@@ -26,6 +26,7 @@ export const Workspace = (props) => {
   const [pixelData, setPixelData] = useState(null); // info on hot pixels. {num frames: [pixel coords]}
   const [quadrantData, setQuadrantData] = useState(null); // [top left, top right, bottom left, bottom right]
 
+  const [frameCount, setFrameCount] = useState(null);
   const [lineChartData, setLineChartData] = useState(null);
   const [histogramData, setHistogramData] = useState(null);
 
@@ -87,11 +88,14 @@ export const Workspace = (props) => {
       data: [videoSrc, eventThreshold.toString()],
       pythonPath: pythonPath,
     });
+
     setEventCount(null);
     setPixelData(null);
+    setFrameCount(null);
     setLineChartData(null);
     setHistogramData(null);
     setQuadrantData(null);
+    
     setPythonScriptRunning(true);
   };
 
@@ -108,6 +112,14 @@ export const Workspace = (props) => {
         // error message has already been stringified, no need to parse
         setPythonErrorMessage(args.error);
         setShowErrorModal(true);
+        
+        setPythonScriptRunning(false);
+      } else if (args.message === "start") {
+        setFrameCount(aggData.frameCount);
+        console.log("Received the event count to intialize graph", frameCount);
+      } else if (args.message === "progress") {
+        setEventCount(aggData.eventCount);
+        setLineChartData(aggData.eventsTime);
       } else {
         // real data has already been parsed
         setEventCount(args.message.eventCount);
@@ -115,9 +127,9 @@ export const Workspace = (props) => {
         setHistogramData(args.message.histogram);
         setPixelData(args.message.hotpixels);
         setQuadrantData(args.message.quadrants);
+        
+        setPythonScriptRunning(false);
       }
-
-      setPythonScriptRunning(false);
     });
 
     // listen for python PID
@@ -145,8 +157,9 @@ export const Workspace = (props) => {
             />
           </Row>
           <Row align="middle" style={{ height: "40%" }}>
-            <HorizontalDataContainer
-              lineChartData={lineChartData}
+            <HorizontalDataContainer 
+              frameCount={frameCount}
+              lineChartData={lineChartData} 
               eventCount={eventCount}
               eventThreshold={eventThreshold}
               thresholdChange={(val) => handleThresholdChange(val)}
