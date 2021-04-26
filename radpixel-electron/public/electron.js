@@ -34,6 +34,8 @@ const { ipcMain, protocol } = require("electron");
 let mainWindow;
 
 function createWindow() {
+  //hides electron security warnings from developer console 
+  process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
   const startUrl = process.env.DEV
     ? "http://localhost:3000"
     : url.format({
