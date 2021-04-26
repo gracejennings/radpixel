@@ -9,15 +9,6 @@
     // kill last process if it is still running
     let lastPid = args.currentPid;
     log.info("value of lastPid", lastPid);
-    if (lastPid) {
-      exec("kill " + lastPid, function (error, stdout, stderr) {
-        log.info("stdout: " + stdout);
-        log.info("stderr: " + stderr);
-        if (error !== null) {
-          log.info("exec error: " + error);
-        }
-      });
-    }
 
     const data = args.data;
     const pythonPath = args.pythonPath;
@@ -31,7 +22,7 @@
       path.join(__dirname, "/../scripts/startup_aggregate.py"),
       {
         // need fully qualified python path
-        //pythonPath: path.join(__dirname, "/../scripts/.venv/bin/python3"),
+        // pythonPath: "/opt/anaconda3/bin/python3",
         pythonPath: pythonPath,
         args: data,
       }

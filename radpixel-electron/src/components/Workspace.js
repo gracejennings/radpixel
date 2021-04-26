@@ -25,6 +25,7 @@ export const Workspace = (props) => {
   const [pixelData, setPixelData] = useState(null); // info on hot pixels. {num frames: [pixel coords]}
   const [quadrantData, setQuadrantData] = useState(null); // [top left, top right, bottom left, bottom right]
 
+  const [frameCount, setFrameCount] = useState(null);
   const [lineChartData, setLineChartData] = useState(null);
   const [histogramData, setHistogramData] = useState(null);
 
@@ -79,6 +80,7 @@ export const Workspace = (props) => {
     });
     setEventCount(null)
     setPixelData(null)
+    setFrameCount(null)
     setLineChartData(null)
     setHistogramData(null)
     setPythonScriptRunning(true);
@@ -94,13 +96,23 @@ export const Workspace = (props) => {
     // send from visiable renderer process
     ipcRenderer.on("MESSAGE_FROM_BACKGROUND_VIA_MAIN", (event, args) => {
       const aggData = JSON.parse(args);
-      setEventCount(aggData.eventCount);
-      setLineChartData(aggData.eventsTime);
-      setHistogramData(aggData.histogram);
-      setPixelData(aggData.hotpixels);
-      setQuadrantData(aggData.quadrants);
-
-      setPythonScriptRunning(false);
+      if (aggData.message === "start") {
+        setFrameCount(aggData.frameCount)
+        console.log("Received the event count to intialize graph", frameCount)
+      }
+      else if (aggData.message === "progress") {
+        setEventCount(aggData.eventCount);
+        setLineChartData(aggData.eventsTime);
+      }
+      else {
+        setEventCount(aggData.eventCount);
+        setLineChartData(aggData.eventsTime);
+        setHistogramData(aggData.histogram);
+        setPixelData(aggData.hotpixels);
+        setQuadrantData(aggData.quadrants);
+  
+        setPythonScriptRunning(false);
+      }
     });
 
     // listen for python PID
@@ -128,6 +140,7 @@ export const Workspace = (props) => {
           </Row>
           <Row align="middle" style={{ height: "40%" }}>
             <HorizontalDataContainer 
+              frameCount={frameCount}
               lineChartData={lineChartData} 
               eventCount={eventCount}
               eventThreshold={eventThreshold}

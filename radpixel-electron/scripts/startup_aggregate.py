@@ -30,7 +30,15 @@ bins = [i * 5 for i in range(0, 52)]
 
 frameWidth = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 frameHeight = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+frameCount = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 heatmap = np.zeros((frameHeight, frameWidth))
+
+print(json.dumps(
+    {
+        "message": "start",
+        "frameCount": frameCount
+    }
+))
 
 idx = 0
 while(cap.isOpened()):
@@ -52,7 +60,7 @@ while(cap.isOpened()):
 
         # line chart of event rate
         chart_arr.append({"frame": idx, "events": lit})
-
+        
         # histogram
         if (idx == 0):
             hist = np.histogram(frame, bins)
@@ -64,6 +72,15 @@ while(cap.isOpened()):
         heatmap = np.add(heatmap, np.where(gray > threshold, 1, 0))
 
         event_count += lit
+        
+        print(json.dumps(
+            {
+                "message": "progress",
+                "eventCount": event_count, 
+                "eventsTime": chart_arr
+            }
+        ))
+
     else:
         break
 
