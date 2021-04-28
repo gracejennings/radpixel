@@ -43,6 +43,7 @@ export const Workspace = (props) => {
         title: "Open Dialogue",
         message: "Select a video file",
         properties: ["openFile"],
+        filters: [{ name: "Videos", extensions: ["mp4"] }],
       })
       .then((result) => {
         if (typeof result.filePaths[0] != "undefined") {
@@ -95,7 +96,7 @@ export const Workspace = (props) => {
     setLineChartData(null);
     setHistogramData(null);
     setQuadrantData(null);
-    
+
     setPythonScriptRunning(true);
   };
 
@@ -112,7 +113,7 @@ export const Workspace = (props) => {
         // error message has already been stringified, no need to parse
         setPythonErrorMessage(args.error);
         setShowErrorModal(true);
-        
+
         setPythonScriptRunning(false);
       } else if (args.message.message === "start") {
         setFrameCount(args.message.frameCount);
@@ -126,7 +127,7 @@ export const Workspace = (props) => {
         setHistogramData(args.message.histogram);
         setPixelData(args.message.hotpixels);
         setQuadrantData(args.message.quadrants);
-        
+
         setPythonScriptRunning(false);
       }
     });
@@ -156,9 +157,9 @@ export const Workspace = (props) => {
             />
           </Row>
           <Row align="middle" style={{ height: "40%" }}>
-            <HorizontalDataContainer 
+            <HorizontalDataContainer
               frameCount={frameCount}
-              lineChartData={lineChartData} 
+              lineChartData={lineChartData}
               eventCount={eventCount}
               eventThreshold={eventThreshold}
               thresholdChange={(val) => handleThresholdChange(val)}

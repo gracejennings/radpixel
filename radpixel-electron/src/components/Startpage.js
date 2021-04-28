@@ -7,7 +7,7 @@ import { FileSearchOutlined } from "@ant-design/icons";
 const electron = window.require("electron");
 const remote = electron.remote;
 const { dialog } = remote;
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 export const Startpage = (props) => {
   const [pythonPath, setPythonPath] = useState("python3");
@@ -42,7 +42,9 @@ export const Startpage = (props) => {
         <Workspace pythonPath={pythonPath} />
       ) : (
         <div className="wrapper">
-          <Title level={1}>RadPixel</Title>
+          <div style={{marginBottom: -60}}>
+            <img src="/RadPixelLogo.png" alt="RadPixel Logo" />
+          </div>
           <Space
             direction="vertical"
             style={{ textAlign: "left", margin: "0px 100px" }}

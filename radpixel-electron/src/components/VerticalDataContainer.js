@@ -32,7 +32,7 @@ export const VerticalDataContainer = (props) => {
   const [histBinsOmitted, setHistBinsOmitted] = useState(6);
   const [formattedQuadrantData, setFormattedQuadrantData] = useState([]);
   const [formattedHistogramData, setFormattedHistogramData] = useState([]);
-  const [histYAxisWidth, setHistYAxisWidth] = useState(10);
+  const [maxYAxisDigits, setMaxYAxisDigits] = useState(4);
 
   const CustomShape = (props) => {
     return (
@@ -124,7 +124,7 @@ export const VerticalDataContainer = (props) => {
         }
       }
 
-      setHistYAxisWidth(maxDigits * 8 - 46); // each digit of the number is 8 pixels wide
+      setMaxYAxisDigits(maxDigits); // each digit of the number is 8 pixels wide
 
       setFormattedHistogramData(formattedData);
     }
@@ -193,7 +193,7 @@ export const VerticalDataContainer = (props) => {
           {props.histogramData ? (
             <BarChart
               data={formattedHistogramData}
-              margin={{ left: histYAxisWidth, bottom: 10 }}
+              margin={{ left: (maxYAxisDigits * 8 - 6), bottom: 10 }}
             >
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
               <XAxis
@@ -208,8 +208,8 @@ export const VerticalDataContainer = (props) => {
                 label={{
                   value: "Count",
                   angle: -90,
-                  position: "insideBottomLeft",
-                  offset: 20,
+                  position: "insideLeft",
+                  offset: (10 - 5.5 * maxYAxisDigits),
                 }}
               />
               <Bar dataKey="count" fill="#8884d8" />

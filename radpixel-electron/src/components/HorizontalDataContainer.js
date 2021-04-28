@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Typography, Statistic, Divider, InputNumber, Button } from "antd";
 import {
@@ -27,6 +27,18 @@ const StatsContainer = styled.div`
 `;
 
 export const HorizontalDataContainer = (props) => {
+
+  const [maxYAxisDigits, setMaxYAxisDigits] = useState(5);
+
+  useEffect(() => {
+    if (props.lineChartData) {
+      const maxVal = Math.max.apply(Math, props.lineChartData.map(function(obj) { return obj.events; }));
+      const maxDigits = maxVal.toString().length;
+      setMaxYAxisDigits(maxDigits);
+    }
+    
+  }, [props.lineChartData]);
+
   const handleRunClick = () => {
     props.restartScript();
   };
@@ -38,7 +50,7 @@ export const HorizontalDataContainer = (props) => {
       </Title>
       <ResponsiveContainer height="45%">
         {props.lineChartData ? (
-          <LineChart data={props.lineChartData}>
+          <LineChart data={props.lineChartData} margin={{ left: (maxYAxisDigits * 8 - 6), bottom: 10 }}>
             <Line
               type="monotone"
               dataKey="events"
@@ -62,7 +74,7 @@ export const HorizontalDataContainer = (props) => {
                 value: "Event Count",
                 angle: -90,
                 position: "insideBottomLeft",
-                offset: 20,
+                offset: (25 - 5.5*maxYAxisDigits),
               }}
             />
             <Tooltip />

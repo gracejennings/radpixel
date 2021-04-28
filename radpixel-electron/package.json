@@ -6,6 +6,7 @@
     "name": "Radpixels",
     "email": "radpixels@vanderbilt.edu"
   },
+  "description": "Desktop application built with Electron for analyzing videos that have been exposed to radiation.",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.5.0",
@@ -72,11 +73,13 @@
       ]
     },
     "rpm": {
-      "artifactName": "RadPixel.rpm"
+      "artifactName": "RadPixel.rpm",
+      "icon": "RadPixelLogo.png"
     },
     "files": [
       "background/**/*",
       "build/**/*",
+      "build/RadPixelLogo.png",
       "node_modules/**/*",
       "scripts/startup_aggregate.py"
     ],
