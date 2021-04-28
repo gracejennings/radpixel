@@ -1,9 +1,9 @@
 {
-  "name": "radpixel-electron",
+  "name": "radpixel",
   "version": "0.1.0",
   "homepage": "./",
   "author": {
-    "name": "Radpixels",
+    "name": "RadPixels",
     "email": "radpixels@vanderbilt.edu"
   },
   "description": "Desktop application built with Electron for analyzing videos that have been exposed to radiation.",
@@ -79,7 +79,6 @@
     "files": [
       "background/**/*",
       "build/**/*",
-      "build/RadPixelLogo.png",
       "node_modules/**/*",
       "scripts/startup_aggregate.py"
     ],

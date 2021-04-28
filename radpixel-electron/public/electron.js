@@ -26,6 +26,7 @@ function createWindow() {
     title: "RadPixel Imager Irradiation Analyzer",
     width: 1200,
     height: 1000,
+    icon: path.join(__dirname, 'RadPixelLogo.png'),
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,

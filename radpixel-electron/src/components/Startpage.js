@@ -43,7 +43,7 @@ export const Startpage = (props) => {
       ) : (
         <div className="wrapper">
           <div style={{marginBottom: -60}}>
-            <img src="/RadPixelLogo.png" alt="RadPixel Logo" />
+            <img src="RadPixelLogo.png" alt="RadPixel Logo" />
           </div>
           <Space
             direction="vertical"
