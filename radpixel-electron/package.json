@@ -74,11 +74,12 @@
     },
     "rpm": {
       "artifactName": "RadPixel.rpm",
-      "icon": "RadPixelLogo.png"
+      "icon": "public/RadPixelLogo.png"
     },
     "files": [
       "background/**/*",
       "build/**/*",
+      "public/RadPixelLogo.png",
       "node_modules/**/*",
       "scripts/startup_aggregate.py"
     ],
