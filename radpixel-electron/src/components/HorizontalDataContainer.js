@@ -40,7 +40,7 @@ export const HorizontalDataContainer = (props) => {
 
   return (
     <Wrapper>
-      <Title level={4} style={{paddingTop: "15px"}}>Event count by video frame</Title>
+      <Title level={4} style={{paddingTop: "15px"}}>Event Count by Video Frame</Title>
       <ResponsiveContainer height="45%">
         {props.lineChartData ? (
           <LineChart data={props.lineChartData}>

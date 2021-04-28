@@ -31,25 +31,8 @@ const LabelWrapper = styled.div`
 export const VerticalDataContainer = (props) => {
   const [histBinsOmitted, setHistBinsOmitted] = useState(6);
   const [formattedQuadrantData, setFormattedQuadrantData] = useState([]);
-
-  const formatHistogramData = () => {
-    if (props.histogramData) {
-      const formattedData = [];
-      for (
-        var i = histBinsOmitted;
-        i < props.histogramData.values.length;
-        ++i
-      ) {
-        formattedData.push({
-          bin: props.histogramData.bins[i + 1], // we choose the right bin edges here
-          count: props.histogramData.values[i],
-        });
-      }
-      return formattedData;
-    } else {
-      return [];
-    }
-  };
+  const [formattedHistogramData, setFormattedHistogramData] = useState([]);
+  const [histYAxisWidth, setHistYAxisWidth] = useState(10);
 
   const CustomShape = (props) => {
     return (
@@ -73,58 +56,82 @@ export const VerticalDataContainer = (props) => {
     );
   };
 
-  useEffect(() => {
-    // quadrantData always has 4 elements - top left, top right, bottom left, bottom right
-    const formatQuadrantData = () => {
-      const formattedData = [];
+  // quadrantData always has 4 elements - top left, top right, bottom left, bottom right
+  const formatQuadrantData = () => {
+    const formattedData = [];
 
-      if (props.quadrantData) {
-        const total = props.quadrantData.reduce((a, b) => a + b, 0);
-        for (var i = 0; i < 4; ++i) {
-          let color;
-          if (props.quadrantData[i] / total < 0.25) {
-            color = "yellow";
-          } else if (props.quadrantData[i] / total < 0.5) {
-            color = "orange";
-          } else if (props.quadrantData[i] / total < 0.75) {
-            color = "red";
-          } else {
-            color = "purple";
-          }
-
-          let x;
-          let y;
-          if (i === 0) {
-            x = 0;
-            y = 1;
-          } else if (i === 1) {
-            x = 1;
-            y = 1;
-          } else if (i === 2) {
-            x = 0;
-            y = 0;
-          } else {
-            x = 1;
-            y = 0;
-          }
-
-          formattedData.push({
-            data: [
-              {
-                count: props.quadrantData[i],
-                x: x,
-                y: y,
-              },
-            ],
-            color: color,
-          });
+    if (props.quadrantData) {
+      const total = props.quadrantData.reduce((a, b) => a + b, 0);
+      for (var i = 0; i < 4; ++i) {
+        let color;
+        if (props.quadrantData[i] / total < 0.25) {
+          color = "yellow";
+        } else if (props.quadrantData[i] / total < 0.5) {
+          color = "orange";
+        } else if (props.quadrantData[i] / total < 0.75) {
+          color = "red";
+        } else {
+          color = "purple";
         }
-      }
-      setFormattedQuadrantData(formattedData);
-    };
 
+        let x;
+        let y;
+        if (i === 0) {
+          x = 0;
+          y = 1;
+        } else if (i === 1) {
+          x = 1;
+          y = 1;
+        } else if (i === 2) {
+          x = 0;
+          y = 0;
+        } else {
+          x = 1;
+          y = 0;
+        }
+
+        formattedData.push({
+          data: [
+            {
+              count: props.quadrantData[i],
+              x: x,
+              y: y,
+            },
+          ],
+          color: color,
+        });
+      }
+    }
+    setFormattedQuadrantData(formattedData);
+  };
+
+  const formatHistogramData = () => {
+    if (props.histogramData) {
+      const formattedData = [];
+      let maxDigits = 0; // use this to compute margin in the chart
+      for (
+        var i = histBinsOmitted;
+        i < props.histogramData.values.length;
+        ++i
+      ) {
+        formattedData.push({
+          bin: props.histogramData.bins[i + 1], // we choose the right bin edges here
+          count: props.histogramData.values[i],
+        });
+        let digitCount = props.histogramData.values[i].toString().length;
+        if (digitCount > maxDigits) { maxDigits = digitCount };
+      }
+
+      setHistYAxisWidth(maxDigits * 8 - 46); // each digit of the number is 8 pixels wide
+
+      setFormattedHistogramData(formattedData);
+    }
+  };
+
+  useEffect(() => {
     formatQuadrantData();
-  }, [props.quadrantData]);
+    formatHistogramData();
+  }, [props.quadrantData, props.histogramData, histBinsOmitted]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -170,7 +177,7 @@ export const VerticalDataContainer = (props) => {
       </div>
       <Divider />
       <LabelWrapper>
-        <Title level={4}>Hot pixel data</Title>
+        <Title level={4}>Hot Pixel Data</Title>
       </LabelWrapper>
       <PlotWrapper>
         <PixelTable pixelData={props.pixelData} />
@@ -182,7 +189,7 @@ export const VerticalDataContainer = (props) => {
       <PlotWrapper>
         <ResponsiveContainer height={200}>
           {props.histogramData ? (
-            <BarChart data={formatHistogramData()}>
+            <BarChart data={formattedHistogramData} margin={{ left: histYAxisWidth }}>
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
               <XAxis dataKey="bin" />
               <YAxis />

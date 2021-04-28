@@ -2,27 +2,6 @@ const electron = require("electron");
 const path = require("path");
 const url = require("url");
 
-// const express = require('express');
-// const cors = require('cors');
-
-// // backend file server
-// const expressApp = express();
-// expressApp.use(cors());
-
-// expressApp.get('/file/:name', function (req, res) {
-//   log.info('express GET with fname ', req.params.name);
-//   try {
-//     let filename = req.params.name;
-//     res.sendFile(filename);
-//   } catch (err) {
-//     log.error(err);
-//   }
-// });
-
-// expressApp.listen(8000, () => {
-//   log.info("fileserver listening on port 8000");
-// });
-
 // Electron logs are stored at ~/Library/Logs/radpixel-electron/
 const log = require("electron-log");
 
