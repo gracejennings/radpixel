@@ -119,7 +119,9 @@ export const VerticalDataContainer = (props) => {
           count: props.histogramData.values[i],
         });
         let digitCount = props.histogramData.values[i].toString().length;
-        if (digitCount > maxDigits) { maxDigits = digitCount };
+        if (digitCount > maxDigits) {
+          maxDigits = digitCount;
+        }
       }
 
       setHistYAxisWidth(maxDigits * 8 - 46); // each digit of the number is 8 pixels wide
@@ -179,7 +181,7 @@ export const VerticalDataContainer = (props) => {
       <LabelWrapper>
         <Title level={4}>Hot Pixel Data</Title>
       </LabelWrapper>
-      <PlotWrapper>
+      <PlotWrapper >
         <PixelTable pixelData={props.pixelData} />
       </PlotWrapper>
       <Divider />
@@ -189,10 +191,27 @@ export const VerticalDataContainer = (props) => {
       <PlotWrapper>
         <ResponsiveContainer height={200}>
           {props.histogramData ? (
-            <BarChart data={formattedHistogramData} margin={{ left: histYAxisWidth }}>
+            <BarChart
+              data={formattedHistogramData}
+              margin={{ left: histYAxisWidth, bottom: 10 }}
+            >
               <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-              <XAxis dataKey="bin" />
-              <YAxis />
+              <XAxis
+                dataKey="bin"
+                label={{
+                  value: "Pixel Value",
+                  position: "insideBottom",
+                  offset: -5,
+                }}
+              />
+              <YAxis
+                label={{
+                  value: "Count",
+                  angle: -90,
+                  position: "insideBottomLeft",
+                  offset: 20,
+                }}
+              />
               <Bar dataKey="count" fill="#8884d8" />
               <Tooltip />
             </BarChart>

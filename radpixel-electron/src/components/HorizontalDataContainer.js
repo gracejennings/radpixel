@@ -1,12 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import {
-  Typography,
-  Statistic,
-  Divider,
-  InputNumber,
-  Button,
-} from "antd";
+import { Typography, Statistic, Divider, InputNumber, Button } from "antd";
 import {
   LineChart,
   Line,
@@ -14,7 +8,7 @@ import {
   XAxis,
   YAxis,
   ResponsiveContainer,
-  Tooltip
+  Tooltip,
 } from "recharts";
 import { LoadingOutlined } from "@ant-design/icons";
 
@@ -33,14 +27,15 @@ const StatsContainer = styled.div`
 `;
 
 export const HorizontalDataContainer = (props) => {
-
   const handleRunClick = () => {
     props.restartScript();
   };
 
   return (
     <Wrapper>
-      <Title level={4} style={{paddingTop: "15px"}}>Event Count by Video Frame</Title>
+      <Title level={4} style={{ paddingTop: "15px" }}>
+        Event Count by Video Frame
+      </Title>
       <ResponsiveContainer height="45%">
         {props.lineChartData ? (
           <LineChart data={props.lineChartData}>
@@ -52,25 +47,43 @@ export const HorizontalDataContainer = (props) => {
               isAnimationActive={false}
             />
             <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-            <XAxis dataKey="frame" type="number" domain={[0, props.frameCount]}/>
-            <YAxis />
+            <XAxis
+              dataKey="frame"
+              type="number"
+              domain={[0, props.frameCount]}
+              label={{
+                value: "Video Frame",
+                position: "insideBottom",
+                offset: -5,
+              }}
+            />
+            <YAxis
+              label={{
+                value: "Event Count",
+                angle: -90,
+                position: "insideBottomLeft",
+                offset: 20,
+              }}
+            />
             <Tooltip />
           </LineChart>
         ) : (
-          <div>{props.pythonScriptRunning ? "Loading chart data..." : "No data"}</div>
+          <div>
+            {props.pythonScriptRunning ? "Loading chart data..." : "No data"}
+          </div>
         )}
         {/* <div>`Frames: ${props.frameCount}`</div> */}
       </ResponsiveContainer>
       <Divider />
-      <Title level={4} >Total Event Count and Threshold</Title>
+      <Title level={4}>Total Event Count and Threshold</Title>
       <StatsContainer>
         {props.eventCount ? (
-            <Statistic
-              title={`Event count - pixels over threshold`}
-              value={props.eventCount}
-            />
-          ) : (
-            <div>{props.pythonScriptRunning ? "Loading..." : "No data"}</div>
+          <Statistic
+            title={`Event count - pixels over threshold`}
+            value={props.eventCount}
+          />
+        ) : (
+          <div>{props.pythonScriptRunning ? "Loading..." : "No data"}</div>
         )}
         <div>
           <div

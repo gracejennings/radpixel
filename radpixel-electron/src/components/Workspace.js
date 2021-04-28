@@ -116,7 +116,6 @@ export const Workspace = (props) => {
         setPythonScriptRunning(false);
       } else if (args.message.message === "start") {
         setFrameCount(args.message.frameCount);
-        console.log('frame count', args.message.frameCount);
       } else if (args.message.message === "progress") {
         setEventCount(args.message.eventCount);
         setLineChartData(args.message.eventsTime);
