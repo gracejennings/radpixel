@@ -36,7 +36,7 @@ The build config is located in the package.json. This is currently configured fo
 	    "extends": null
 	  }
 
-Note: ```asar``` is a packer that must be disabled to correcrtly package the python scripts. You might get a warning that it is not recommended for this to be disabled but this is for developers that do not want the source code to be visible for security purposes.
+Note: ```asar``` is a packer that must be disabled to correctly package the python scripts. You might get a warning that it is not recommended for this to be disabled but this is for developers that do not want the source code to be visible for security purposes.
 
 
 To start the build process run ```npm run build-linux``` which runs the scripts specified in [package.json](https://github.com/gracejennings/radpixel/blob/main/radpixel-electron/package.json).
