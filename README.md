@@ -4,19 +4,19 @@ This Electron desktop application ( Linux supported ) applies image processing a
 
 ## Getting Started 
 
-Clone this repo to get started. This contains all of the source code necessary to edit, build, and package the application. The three dependencies you will need preinstalled are [python3](https://www.python.org/downloads/),  [OpenCV](https://opencv.org/) and [NumPY](https://numpy.org/). To run, you will need to be able to select a Python interpreter.
+Clone this repo to get started. This contains all of the source code necessary to edit, build, and package the application. The three dependencies you will need preinstalled are [python3](https://www.python.org/downloads/),  [OpenCV](https://opencv.org/) and [NumPY](https://numpy.org/). To run, you will need to be able to select a Python interpreter with NumPy and OpenCV installed. We recommend isolating your Python environment using [venv](https://docs.python.org/3/library/venv.html), [pipenv](https://pypi.org/project/pipenv/) if you like `pip`, or [conda-env](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#activating-an-environment) if you are using Anaconda.
 
 ### Development Mode
 
-In the ```radpixel-electron``` project directory run ```npm start``` to launch the app locally. The page will reload as you save edits and any errors will appear in the development console. 
+In the ```radpixel-electron``` project directory run ```npm install``` and ```npm run start``` to launch the app locally. The page will reload as you save edits and any errors will appear in the development console. 
 
 ### Building
 
-The build config is located in the package.json. This is currently configured for Linux with a target rpm package. To start the build process run ```npm run build-linux```. 
+The build config is located in the package.json. This is currently configured for RedHat-Based Linux distributions. To start the build process run ```npm run build-linux```. You will find the target .rpm file in the /dist directory.
 
 ### Installing on Linux Machine
 
-The resulting .rpm file can be distributed and installed on Linux. It has been tested on CentOS7 and CentOS8. 
+The resulting .rpm file can be distributed and installed on RedHat-based Linux distributions. It has been tested on CentOS 7 and CentOS 8. On CentOS 7, open a terminal and run `$ yum install RadPixel.rpm` to install, and `$ radpixel` to run the application. On CentOS 8, simply double-click the application.
 
 
 ## Architecture
