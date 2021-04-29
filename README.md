@@ -12,7 +12,40 @@ In the ```radpixel-electron``` project directory run ```npm install``` and ```np
 
 ### Building
 
-The build config is located in the package.json. This is currently configured for RedHat-Based Linux distributions. To start the build process run ```npm run build-linux```. You will find the target .rpm file in the /dist directory.
+The build config is located in the package.json. This is currently configured for RedHat-Based Linux distributions in [package.json](https://github.com/gracejennings/radpixel/blob/main/radpixel-electron/package.json). 
+
+	"build": {
+	    "appId": "RadPixel",
+	    "asar": false,
+	    "linux": {
+	      "target": [
+	        "rpm"
+	      ]
+	    },
+	    "rpm": {
+	      "artifactName": "RadPixel.rpm",
+	      "icon": "public/RadPixelLogo.png"
+	    },
+	    "files": [
+	      "background/**/*",
+	      "build/**/*",
+	      "public/RadPixelLogo.png",
+	      "node_modules/**/*",
+	      "scripts/startup_aggregate.py"
+	    ],
+	    "extends": null
+	  }
+
+Note: ```asar``` is a packer that must be disabled to correcrtly package the python scripts. You might get a warning that it is not recommended for this to be disabled but this is for developers that do not want the source code to be visible for security purposes.
+
+
+To start the build process run ```npm run build-linux``` which runs the scripts specified in [package.json](https://github.com/gracejennings/radpixel/blob/main/radpixel-electron/package.json).
+
+	"react-build": "react-scripts build",
+	"electron-build-linux": "electron-builder --linux -c.extraMetadata.main=build/electron.js",
+	"build-linux": "npm run react-build && npm run electron-build-linux", 
+
+You will find the target .rpm file in the /dist directory.
 
 ### Installing on Linux Machine
 
@@ -29,8 +62,10 @@ The RadPixel application attempts to identify radiation events in the video usin
 It is also important to distinguish transient events from stuck pixels, also called hot pixels. Transient events are when pixels briefly light up when hit by radiation. Stuck pixels, on the other hand, represent permanent damage to the imager. In order to identify stuck pixels, users can use the Hot Pixels table to see the coordinate locations of the top ten pixels experiencing the most events across all video frames. Pixels that experienced a high number of events are more likely to have sustained permanent damage. Note for the coordinates that in videos the origin is in the top left corner rather than the bottom left.
 
 Read more about imager irradiation effects here:
-* https://www.spiedigitallibrary.org/conference-proceedings-of-spie/10564/105640M/Radiation-effects-on-image-sensors/10.1117/12.2309026.full?SSO=1
-* https://nepp.nasa.gov/files/16561/08_164_3%20JPL%20Becker%20Compendium%20report%201_09.pdf
+
+
+* [Radiation effects on image sensors](https://www.spiedigitallibrary.org/conference-proceedings-of-spie/10564/105640M/Radiation-effects-on-image-sensors/10.1117/12.2309026.full?SSO=1)
+* [NASA: Commercial Sensor Survey Fiscal Year 2008 Compendium Radiation Test Report](https://nepp.nasa.gov/files/16561/08_164_3%20JPL%20Becker%20Compendium%20report%201_09.pdf)
 
 ## Architecture
 
