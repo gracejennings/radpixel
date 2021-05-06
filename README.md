@@ -1,6 +1,6 @@
 # RADPIXEL
 
-This Electron desktop application (Linux supported) applies image processing algorithms to an input video clip to analyze the effects of radiation on imagers. RadPixel was developed by Grace Jennings, Will Miller, and Juyoung Song for their EECE Senior Design Project at the Vanderbilt School of Engineering. The application was developed for Dr. Brian Sierawski at Vanderbilt's Institute for Space Defense Electronics (ISDE) for use in their imager irradiation lab.
+This Electron desktop application (Linux supported) applies image processing algorithms to an input video clip to analyze the effects of radiation on imagers. RadPixel was developed by Grace Jennings, Will Miller, and Juyoung Song for their EECE Senior Design Project at the Vanderbilt School of Engineering.  
 
 ## Getting Started 
 
